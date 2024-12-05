@@ -1,7 +1,7 @@
 #import "@preview/quick-maths:0.2.0": shorthands
 #show: shorthands.with(($**$, $times$))
 
-#import "@preview/physica:0.9.3": bra, ket, expval, eval, Re
+#import "@preview/physica:0.9.3": bra, ket, expval, eval, Re, Im
 
 #import "template.typ": project, table-header, thin-hline, bilingual-bibliography
 #show: project.with(
@@ -289,6 +289,54 @@ $ 1-epsilon >= integral.double_(RR^2) (((t-t_0) / sigma_t)^2 + ((f-f_0) / sigma_
 - 随机信号根本不是 x = 什么什么线性组合，没它这一套。
 
   是先WVD（或求自相关）再期望，不是反过来。
+
+== 均匀随机相位
+
+令 $theta$ 均匀分布于 $[0,2pi)$，则 $e^(j theta)$ 是个复随机变量。
+
+可知
+$
+  expect e^(j theta)
+  // = expect Re e^(j theta) + j Im expect e^(j theta)
+  &= integral_0^(2pi) e^(j theta) ** (dif theta)/(2pi)
+  &= 0.
+  \
+  expect abs(e^(j theta))^2
+  &= expect 1 &= 1.
+  \
+  expect (Re e^(j theta))^2
+  &= integral_0^(2pi) cos^2 theta ** (dif theta)/(2pi)
+  &= 1/2.
+  \
+  expect (Im e^(j theta))^2
+  &= expect abs(e^(j theta))^2 - expect (Re e^(j theta))^2
+  &= 1/2.
+  \
+  expect Re e^(j theta) Im e^(j theta)
+  &= integral_0^(2pi) cos theta sin theta ** (dif theta)/(2pi)
+  = integral_0^(2pi) (sin(2theta))/2 ** (dif theta)/(2pi)
+  &= 0.
+$
+这说明 $Re e^(j theta), Im e^(j theta)$ 是两个不线性相关、零均值、方差为 $1/2$ 的随机变量。
+
+更进一步，令 ${theta_i}_(i=1)^N$ 是一组均匀分布于 $[0,2pi)$ 的独立随机变量，则 ${e^(j theta_i)}_i$ 也是一组独立随机变量。
+$
+  expect overline(e^(j theta))
+  &= overline(expect e^(j theta)) = overline(0) &= 0.
+  \
+  // expect overline((Re e^(j theta))^2)
+  // &= overline(expect (Re e^(j theta))^2) = overline(1/2) &= 1/2.
+  // \
+  expect overline(Re e^(j theta))^2
+  &= 1/N ** overline(expect (Re e^(j theta))^2 + 0)
+  &= 1/(2N).
+  \
+  expect overline(Im e^(j theta))^2
+  &= expect overline(Re e^(j (theta + pi\/2)))^2
+  &= 1/(2N).
+$
+
+// TODO: 与数据不符。
 
 == 旋转时频平面——谐振子
 
