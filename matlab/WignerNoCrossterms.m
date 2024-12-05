@@ -102,11 +102,16 @@ for i = 1:length(N_list)
 
     sum = 0;
 
+    bar = waitbar(0, sprintf("N = %d", Nl));
+
     for nl = 1:Nl
+        waitbar(nl / Nl, bar);
         x = c1 * x1 + c2 * exp(1i * theta(1, nl)) * x2;
         [tfr, fx, tx] = wvd(x, fs);
         sum = sum + tfr;
     end
+
+    close(bar);
 
     sum = sum / Nl;
     WVD_MonteCarlo{i, 2} = sum;
