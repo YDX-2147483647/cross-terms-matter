@@ -3,6 +3,8 @@
 
 #import "@preview/physica:0.9.3": bra, ket, expval, eval, Re, Im
 
+#import "@preview/cetz:0.3.1"
+
 #import "template.typ": project, table-header, thin-hline, bilingual-bibliography
 #show: project.with(
   title: "Wigner–Ville分布中交叉项的意义",
@@ -18,6 +20,8 @@
 #let fourier = math.cal("F")
 #let hbar = sym.planck.reduce
 
+#let hl = text.with(red)
+
 // 如果卷积不用强调变量，直接写`*`即可。
 #let conv = math.op(sym.ast, limits: true)
 
@@ -30,7 +34,7 @@ Fourier变换、Wigner–Ville分布的“刚性”比较强，它们不像短�
   以往直观认为单频，Fourier变换却说有正负两频率。
 
   - 把复频率弄掉 ⇒ 解析信号、Hilbert变换。
-  - 就用正负频率分析 ⇒ 正角与同相分量、频谱循环混叠……
+  - 就用正负频率分析 ⇒ 正交调制、频谱循环混叠……
 
 - Wigner–Ville分布分析双分量信号
 
@@ -48,6 +52,11 @@ Fourier变换、Wigner–Ville分布的“刚性”比较强，它们不像短�
 ==== 正负波包
 
 ==== 均匀随机相位差
+
+#figure(
+  image("fig/cross_intensity.png"),
+  caption: [TODO：理论差个系数],
+)
 
 公式 (3.3)@hlawatsch1997[page. 7] 中，令 $c_1 = 1$，将 $c_2$ 改为模固定为 $1$、相位均匀分布的随机变量。这时 $WVD$ 中，自项没有随机性，交叉项的期望为零。
 
@@ -390,7 +399,7 @@ $ fourier_t^f [x(tau) conv_tau^t y(tau)] = fourier_tau^f [x(tau)] ** fourier_tau
 
 $ R_(x,y) (t,tau) := eval(x)_(t + tau / 2) ** eval(y^*)_(t - tau / 2). $
 
-$ WVD_(x y) (t,f) := integral_RR R_(x y) (t,tau) ** e^(j 2pi f tau) dif tau. $
+$ WVD_(x y) (t,f) := fourier_tau^f [R_(x y) (t,tau)]. $
 
 $WVD_x := WVD_(x x)$。
 
@@ -437,5 +446,127 @@ $
   &= integral.double_(RR^2) W_x (t + t' / 2, f + f' / 2) ** W_y (t - t' / 2, f - f' / 2) dif t' dif f'.
 $
 
-
 #bilingual-bibliography(bibliography: bibliography.with("ref.bib"))
+
+#set page(height: auto)
+#pagebreak()
+= 幻灯片
+
+== 薛
+
+  $
+    W_x (t,f) = integral underbrace(x(t+tau/2) x^*(t-tau/2), "") ** e^(-j 2pi f tau ) dif tau
+  $
+  $x(t)$ 是确定信号\
+  
+  $X(t)$ 
+  $
+    R_x (t,tau) 
+    
+  $
+  $
+     W_X (t,f) = expect integral underbrace(X(t+tau/2) X^*(t-tau/2), "") ** e^(-j 2pi f tau ) dif tau
+  $
+
+  $
+    R_X (t,tau) 
+    
+  $
+  $ z(t) = x(t) + y(t) $
+  $ W_z (t,f) = & W_x (t,f) + W_y (t,f) \  
+                & + thin hl(underbrace(2 Re W_(x,y) (t,f) ))  $
+  $ Z(t) = X(t) + Y(t) $
+  $ W_Z (t,f) = & expect W_X (t,f) + expect W_Y (t,f) \  
+                & + thin hl(underbrace(2 Re expect W_(X,Y) (t,f) ))  $
+  $ 
+    Z(t) = x(t) + C y(t)
+  $
+  $
+    y(t)
+  $
+  $ C=e^(j theta) $
+  $ W_(x,y) (t,f) = integral x(t+tau/2) y^(*)(t-tau/2) e^(-j 2pi f tau) dif tau $
+  $ 
+    I(t,f) & = expect [C (W_(x,y) (t,f) + W_(y,x)(t,f))] \
+           & = (integral_(0)^(2pi) e^(j theta) (dif theta) / (2 pi))**(2 Re W_(x,y)(t,f)) \
+           & = 0
+  $
+  $
+    I(t,f)
+    = 2  WVD_(x, y)(t-t_(12),f-f_(12)) cos[2pi(v_(12)t-f tau_(12))]
+  $
+#pagebreak()
+== 徐
+
+=== 3交叉项的物理意义·时域定性
+
+$ R_(x+y) = underbrace(R_x + R_y) + underbrace(R_(x y) + R_(y x)) $
+$ W_(x+y) = overbrace(W_x + W_y) + overbrace(2 Re W_(x y)) $
+
+$ fourier_f^tau #h(0em) stretch(arrow.b, size: #3em) $
+
+$
+  R_(x y) (t,tau) := x(t+tau/2) y^* (t - tau/2) \
+  arg x - arg y
+$
+
+=== 3交叉项的物理意义·引理
+
+$
+  cases(x(t), y(t)) 
+  &quad
+  cases(
+    x' (t) = x(t - t_x) ** e^(j 2pi f_x),
+    y' (t) = y(t - t_y) ** e^(j 2pi f_y),
+  ) \
+  W_(x,y) (t, f)
+$
+$
+  & W_(x' y') (t,f) \
+  &= W_(x y) (t - (t_x + t_y) / 2, f - (f_x + f_y) / 2) ** e^(-j 2pi f (t_x - t_y)) ** e^(j 2pi t (f_x - f_y)) \
+$
+
+$x$
+$y$
+$W_(x y)$
+
+$x'$
+$y'$
+$W_(x' y')$
+
+=== 3交叉项的物理意义·频域定量
+
+$ z = x + y $
+
+$ x' quad y' $
+
+$ W_(x' y') $
+
+$ 2 Re W_(x y) prop abs(W_(x' y')) ** cos(2pi ((f_x - f_y) t - (t_x - t_y) f) + phi) $
+
+
+#figure(cetz.canvas(length: 3cm, {
+  import cetz.draw: *
+
+  set-style(
+    mark: (fill: black, scale: 2),
+    stroke: (thickness: 0.4pt, cap: "round"),
+    angle: (
+      radius: 0.3,
+      label-radius: .22,
+      fill: green.lighten(80%),
+      stroke: (paint: green.darken(50%))
+    ),
+    content: (padding: 1pt)
+  )
+
+  grid((-1.5, -1.5), (1.4, 1.4), step: 0.5, stroke: gray + 0.2pt)
+
+  line((-1.5, 0), (1.5, 0), mark: (end: "stealth"))
+  content((), $ t $, anchor: "west")
+  line((0, -1.5), (0, 1.5), mark: (end: "stealth"))
+  content((), $ f $, anchor: "south")
+}))
+
+#text(green, $x thick x'$)
+#text(purple, $y thick y'$)
