@@ -115,9 +115,11 @@ for i = 1:length(n_sample_list)
     cross_intensity(:, i) = max(abs(d), [], [2, 3]);
 end
 
+save("data/cross_intensity.mat", "n_sample_list", "cross_intensity")
+
 %% 仿真并测量交叉项强度——绘图
 
-% TODO: 用 seaborn 的`lineplot`画。
+% See ../py/draw_cross_intensity.py
 
 % mean/std over #repeat
 mu = mean(cross_intensity, 1);
@@ -126,8 +128,6 @@ loglog(n_sample_list, mu, "DisplayName", "μ");
 hold on
 loglog(n_sample_list, mu + sigma, "DisplayName", "μ + σ", "LineStyle", "--");
 loglog(n_sample_list, mu - sigma, "DisplayName", "μ - σ", "LineStyle", "--");
-% TODO：这理论的系数还有问题
-loglog(n_sample_list, 1 ./ sqrt(n_sample_list), "DisplayName", "理论", "LineStyle", ":");
 hold off
 grid
 legend
