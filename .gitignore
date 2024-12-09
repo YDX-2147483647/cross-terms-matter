@@ -2,6 +2,7 @@
 /doc/fig/
 /matlab/data/
 *.pdf
+*.nb
 
 # Python-generated files
 __pycache__/
