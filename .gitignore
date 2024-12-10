@@ -1,6 +1,7 @@
 /fig/
 /doc/fig/
 /matlab/data/
+/py/data/
 *.pdf
 *.nb
 
