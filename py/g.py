@@ -103,7 +103,6 @@ def __(data, fs, peak_freqs, plt, signal):
     _ax.grid()
     _ax.legend()
 
-
     for _i, _f in enumerate(peak_freqs):
         _ax.axvline(x=_f, color="red")
         _ax.text(
@@ -112,7 +111,6 @@ def __(data, fs, peak_freqs, plt, signal):
             s=f"{_f:.1f} Hz",
             color="red",
         )
-
 
     _fig
     return
@@ -163,7 +161,6 @@ def __(data, fs, np, peak_freqs, plt, signal):
     _ax.grid()
     _ax.legend()
 
-
     for _i, _f in enumerate(peak_freqs):
         _ax.axvline(x=_f, color="red")
         _ax.text(
@@ -172,7 +169,6 @@ def __(data, fs, np, peak_freqs, plt, signal):
             s=f"{_f:.2f} Hz",
             color="red",
         )
-
 
     _fig
     return
@@ -250,12 +246,7 @@ def __(
         ylabel="频率 / Hz",
         ylim=np.array([[3, -2], [-4, 5]]) @ peak_freqs,
     )
-    _c = _ax.imshow(
-        _sx2,
-        origin="lower",
-        aspect="auto",
-        extent=_stft.extent(data.len()),
-    )
+    _c = _ax.imshow(_sx2, origin="lower", extent=_stft.extent(data.len()))
     _fig.colorbar(_c)
 
     for _f in peak_freqs:
@@ -272,37 +263,69 @@ def __(mo):
     return
 
 
+@app.cell(hide_code=True)
+def __(mo):
+    mo.md(
+        r"""
+        查到以下若干实现。
+
+        - ❌[`tftb.processing.cohen.WignerVilleDistribution(signal)` — pytftb 0.0.1 documentation](https://tftb.readthedocs.io/en/latest/apiref/tftb.processing.html#tftb.processing.cohen.WignerVilleDistribution)
+
+            - 😦没有双倍上采样。
+            - 😵要求信号点数是偶数。
+            - 🐢用`for`循环计算自相关。
+            - 💀从十年前维护到两年前。尽管在 scikit-signal 名下，但[未适配 SciPy v1.1 (#180)](https://github.com/scikit-signal/tftb/pull/180)。
+
+        - ❓[`wigner(psi, xvec)` — QuTiP 5.0 Documentation](https://qutip.readthedocs.io/en/qutip-5.0.x/apidoc/functions.html#qutip.wigner.wigner)
+
+            - 👍从十四年前维护至今。
+            - 😦[首页](https://qutip.org/)表示“some features may not be available under Windows”。
+            - 😦“QuTiP: Quantum Toolbox in Python”，只有一小部分是我们需要的。
+
+        - ✅[`wignerdpy.wigner_distribution(x)` - ljbkusters/python-wigner-distribution (pywigner) - GitHub](https://github.com/ljbkusters/python-wigner-distribution)
+
+            - 😦从三年前维护到去年。
+            - 😃默认用解析信号。
+            - 🐇向量化计算。
+        """
+    )
+    return
+
+
 @app.cell
 def __():
-    # PyTFTB uses deprecated SciPy functions, leading to ImportError.
-    # However, we do not actually use those functions.
-    # To circumvent it, let us lie to the interpreter.
-    # https://github.com/scikit-signal/tftb/pull/180
-    import scipy
-
-    scipy.integrate.trapz = scipy.integrate.trapezoid
-    scipy.signal.hamming = scipy.signal.windows.hamming
-
-    from tftb.processing import WignerVilleDistribution
-    return WignerVilleDistribution, scipy
+    from wignerdpy import wigner_distribution
+    return (wigner_distribution,)
 
 
 @app.cell
-def __(WignerVilleDistribution, data, plt):
-    spec = WignerVilleDistribution(
-        # WVD要求信号点数必须是偶数
-        data.to_numpy()[: data.len() // 2 * 2]
+def __(data, fs, np, peak_freqs, plt, time, wigner_distribution):
+    _spec, _max_freq = wigner_distribution(data, sample_frequency=fs)
+
+    assert _spec.min() < 0
+    _max_spec = abs(_spec).max()
+
+    _fig, _ax = plt.subplots()
+    _ax.set(
+        title="WVD",
+        xlabel=time.name,
+        ylabel="频率 / Hz",
+        ylim=np.array([[3, -2], [-4, 5]]) @ peak_freqs,
     )
-    spec.run()
+    _c = _ax.imshow(
+        _spec,
+        cmap="PiYG",
+        vmin=-_max_spec,
+        vmax=_max_spec,
+        extent=(time[0], time[-1], 0, _max_freq),
+    )
+    _fig.colorbar(_c)
 
-    spec.plot(kind="contour", show_tf=True, show=False)
-    plt.gcf()
-    return (spec,)
+    for _f in peak_freqs:
+        _ax.axhline(y=_f, color="red", linestyle="dashed")
+        _ax.text(x=1, y=_f + 0.1, s=f"{_f:.1f} Hz", color="red")
 
-
-@app.cell
-def __(spec):
-    spec.tfr.min()
+    _fig
     return
 
 

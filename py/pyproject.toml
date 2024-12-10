@@ -9,7 +9,10 @@ dependencies = [
     "ipykernel>=6.29.5",
     "marimo>=0.9.30",
     "polars>=1.17.1",
+    "pywigner",
     "scipy>=1.14.1",
     "seaborn>=0.13.2",
-    "tftb>=0.1.4",
 ]
+
+[tool.uv.sources]
+pywigner = { git = "https://github.com/ljbkusters/python-wigner-distribution" }

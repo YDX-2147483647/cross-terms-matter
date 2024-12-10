@@ -791,9 +791,9 @@ dependencies = [
     { name = "ipykernel" },
     { name = "marimo" },
     { name = "polars" },
+    { name = "pywigner" },
     { name = "scipy" },
     { name = "seaborn" },
-    { name = "tftb" },
 ]
 
 [package.metadata]
@@ -802,9 +802,9 @@ requires-dist = [
     { name = "ipykernel", specifier = ">=6.29.5" },
     { name = "marimo", specifier = ">=0.9.30" },
     { name = "polars", specifier = ">=1.17.1" },
+    { name = "pywigner", git = "https://github.com/ljbkusters/python-wigner-distribution" },
     { name = "scipy", specifier = ">=1.14.1" },
     { name = "seaborn", specifier = ">=0.13.2" },
-    { name = "tftb", specifier = ">=0.1.4" },
 ]
 
 [[package]]
@@ -866,6 +866,15 @@ source = { registry = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple" }
 sdist = { url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/3a/31/3c70bf7603cc2dca0f19bdc53b4537a797747a58875b552c8c413d963a3f/pytz-2024.2.tar.gz", hash = "sha256:2aa355083c50a0f93fa581709deac0c9ad65cca8a9e9beac660adcbd493c798a", size = 319692 }
 wheels = [
     { url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/11/c3/005fcca25ce078d2cc29fd559379817424e94885510568bc1bc53d7d5846/pytz-2024.2-py2.py3-none-any.whl", hash = "sha256:31c7c1817eb7fae7ca4b8c7ee50c72f93aa2dd863de768e1ef4245d426aa0725", size = 508002 },
+]
+
+[[package]]
+name = "pywigner"
+version = "0.0.1"
+source = { git = "https://github.com/ljbkusters/python-wigner-distribution#0852cc7e90389c0fe5f61116ea8e2de873d6c921" }
+dependencies = [
+    { name = "numpy" },
+    { name = "scipy" },
 ]
 
 [[package]]
@@ -1120,17 +1129,6 @@ sdist = { url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/1a/4c/9b
 wheels = [
     { url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/96/00/2b325970b3060c7cecebab6d295afe763365822b1306a12eeab198f74323/starlette-0.41.3-py3-none-any.whl", hash = "sha256:44cedb2b7c77a9de33a8b74b2b90e9f50d11fcf25d8270ea525ad71a25374ff7", size = 73225 },
 ]
-
-[[package]]
-name = "tftb"
-version = "0.1.4"
-source = { registry = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple" }
-dependencies = [
-    { name = "matplotlib" },
-    { name = "numpy" },
-    { name = "scipy" },
-]
-sdist = { url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/17/7d/4ea3d1d9c1b510efe0a0b3765055da080cc3185092537a92e06aaee14177/tftb-0.1.4.tar.gz", hash = "sha256:747e8080d03c12f1eb198e7337ca0eb5c9b39d6df41f437863f19b0eb10c962c", size = 402840 }
 
 [[package]]
 name = "tomlkit"
