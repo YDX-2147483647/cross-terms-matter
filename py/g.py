@@ -398,7 +398,14 @@ def __(data, max_spec, np, peak_freqs, plt, spec, spec_max_freq, time):
     _fig.colorbar(_c)
 
     _axs[1].set(title="时域", ylabel=r"加速度 / ($\text{m/s^2}$)")
-    _axs[1].plot(time, data)
+    _axs[1].plot(time, data, label="实测")
+    _axs[1].plot(
+        time,
+        0.5 * np.sin(2 * np.pi * (peak_freqs[1] - peak_freqs[0]) / 2 * time - 1.2),
+        label=f"{peak_freqs[1] - peak_freqs[0]:.2f} Hz 拍频",
+        linestyle="dashed",
+    )
+    _axs[1].legend()
 
     for _ax in _axs:
         _ax.grid()
