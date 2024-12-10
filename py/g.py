@@ -307,7 +307,7 @@ def __():
     return (wigner_distribution,)
 
 
-@app.cell
+@app.cell(hide_code=True)
 def __():
     from matplotlib.patches import FancyBboxPatch
     from matplotlib.transforms import Bbox
@@ -328,23 +328,27 @@ def __():
     return Bbox, FancyBboxPatch, add_fancy_patch_around
 
 
+@app.cell
+def __(data, fs, wigner_distribution):
+    spec, spec_max_freq = wigner_distribution(data, sample_frequency=fs)
+
+    assert spec.min() < 0
+    max_spec = abs(spec).max()
+    return max_spec, spec, spec_max_freq
+
+
 @app.cell(hide_code=True)
 def __(
     Bbox,
     add_fancy_patch_around,
-    data,
-    fs,
+    max_spec,
     np,
     peak_freqs,
     plt,
+    spec,
+    spec_max_freq,
     time,
-    wigner_distribution,
 ):
-    _spec, _max_freq = wigner_distribution(data, sample_frequency=fs)
-
-    assert _spec.min() < 0
-    _max_spec = abs(_spec).max()
-
     _fig, _ax = plt.subplots()
     _ax.set(
         title="WVD",
@@ -353,11 +357,11 @@ def __(
         ylim=np.array([[2, -1], [-1, 2]]) @ peak_freqs,
     )
     _c = _ax.imshow(
-        _spec,
+        spec,
         cmap="PiYG",
-        vmin=-_max_spec,
-        vmax=_max_spec,
-        extent=(time[0], time[-1], 0, _max_freq),
+        vmin=-max_spec,
+        vmax=max_spec,
+        extent=(time[0], time[-1], 0, spec_max_freq),
     )
     _fig.colorbar(_c)
 
@@ -370,6 +374,35 @@ def __(
             edgecolor="red",
         )
         _ax.text(x=3, y=_f - 0.1, s=f"{_f:.1f} Hz", color="red")
+
+    _fig
+    return
+
+
+@app.cell(hide_code=True)
+def __(data, max_spec, np, peak_freqs, plt, spec, spec_max_freq, time):
+    _fig, _axs = plt.subplots(nrows=2, sharex=True, layout="constrained")
+
+    _axs[0].set(
+        title="WVD",
+        ylabel="频率 / Hz",
+        ylim=np.array([[1.5, -0.5], [-0.5, 1.5]]) @ peak_freqs,
+    )
+    _c = _axs[0].imshow(
+        spec,
+        cmap="PiYG",
+        vmin=-max_spec,
+        vmax=max_spec,
+        extent=(time[0], time[-1], 0, spec_max_freq),
+    )
+    _fig.colorbar(_c)
+
+    _axs[1].set(title="时域", ylabel=r"加速度 / ($\text{m/s^2}$)")
+    _axs[1].plot(time, data)
+
+    for _ax in _axs:
+        _ax.grid()
+    _axs[-1].set(xlabel=time.name, xlim=(4.5, 8))
 
     _fig
     return
