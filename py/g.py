@@ -27,6 +27,7 @@ def __():
     from matplotlib import pyplot as plt
 
     plt.rcParams["figure.constrained_layout.use"] = True
+    plt.rcParams["image.aspect"] = "auto"
     return (plt,)
 
 
@@ -224,7 +225,9 @@ def __(mo):
 
 @app.cell(hide_code=True)
 def __(
+    Bbox,
     ShortTimeFFT,
+    add_fancy_patch_around,
     data,
     fs,
     gaussian,
@@ -250,8 +253,14 @@ def __(
     _fig.colorbar(_c)
 
     for _f in peak_freqs:
-        _ax.axhline(y=_f, color="red", linestyle="dashed")
-        _ax.text(x=1, y=_f + 0.1, s=f"{_f:.1f} Hz", color="red")
+        add_fancy_patch_around(
+            _ax,
+            Bbox([[4.8, _f - 0.1], [12, _f + 0.1]]),
+            boxstyle="round,pad=0.1",
+            fill=False,
+            edgecolor="red",
+        )
+        _ax.text(x=3, y=_f - 0.1, s=f"{_f:.1f} Hz", color="red")
 
     _fig
     return
@@ -299,7 +308,38 @@ def __():
 
 
 @app.cell
-def __(data, fs, np, peak_freqs, plt, time, wigner_distribution):
+def __():
+    from matplotlib.patches import FancyBboxPatch
+    from matplotlib.transforms import Bbox
+
+
+    def add_fancy_patch_around(ax, bb, **kwargs):
+        """
+        https://matplotlib.org/stable/gallery/shapes_and_collections/fancybox_demo.html#parameters-for-modifying-the-box
+        """
+        kwargs = {
+            "facecolor": (1, 0.8, 1, 0.5),
+            "edgecolor": (1, 0.5, 1, 0.5),
+            **kwargs,
+        }
+        fancy = FancyBboxPatch(bb.p0, bb.width, bb.height, **kwargs)
+        ax.add_patch(fancy)
+        return fancy
+    return Bbox, FancyBboxPatch, add_fancy_patch_around
+
+
+@app.cell(hide_code=True)
+def __(
+    Bbox,
+    add_fancy_patch_around,
+    data,
+    fs,
+    np,
+    peak_freqs,
+    plt,
+    time,
+    wigner_distribution,
+):
     _spec, _max_freq = wigner_distribution(data, sample_frequency=fs)
 
     assert _spec.min() < 0
@@ -310,7 +350,7 @@ def __(data, fs, np, peak_freqs, plt, time, wigner_distribution):
         title="WVD",
         xlabel=time.name,
         ylabel="频率 / Hz",
-        ylim=np.array([[3, -2], [-4, 5]]) @ peak_freqs,
+        ylim=np.array([[2, -1], [-1, 2]]) @ peak_freqs,
     )
     _c = _ax.imshow(
         _spec,
@@ -322,8 +362,14 @@ def __(data, fs, np, peak_freqs, plt, time, wigner_distribution):
     _fig.colorbar(_c)
 
     for _f in peak_freqs:
-        _ax.axhline(y=_f, color="red", linestyle="dashed")
-        _ax.text(x=1, y=_f + 0.1, s=f"{_f:.1f} Hz", color="red")
+        add_fancy_patch_around(
+            _ax,
+            Bbox([[4.8, _f - 0.1], [12, _f + 0.1]]),
+            boxstyle="round,pad=0.1",
+            fill=False,
+            edgecolor="red",
+        )
+        _ax.text(x=3, y=_f - 0.1, s=f"{_f:.1f} Hz", color="red")
 
     _fig
     return
