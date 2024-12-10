@@ -1,3 +1,5 @@
+"""绘制随机相位例子中交叉项的消失过程"""
+
 from pathlib import Path
 
 import numpy as np

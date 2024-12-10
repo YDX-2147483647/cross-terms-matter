@@ -37,14 +37,16 @@ def __():
 
 
 @app.cell
-def __(pl):
-    df = pl.read_csv("data/Raw Data.csv").select(
+def __(__file__, pl):
+    from pathlib import Path
+
+    df = pl.read_csv(Path(__file__).parent / "data/Raw Data.csv").select(
         [
             pl.col("Time (s)").alias("时间 / s"),
             pl.col("Linear Acceleration y (m/s^2)").alias("加速度 / (m/s²)"),
         ]
     )
-    return (df,)
+    return Path, df
 
 
 @app.cell
