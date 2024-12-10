@@ -793,6 +793,7 @@ dependencies = [
     { name = "polars" },
     { name = "scipy" },
     { name = "seaborn" },
+    { name = "tftb" },
 ]
 
 [package.metadata]
@@ -803,6 +804,7 @@ requires-dist = [
     { name = "polars", specifier = ">=1.17.1" },
     { name = "scipy", specifier = ">=1.14.1" },
     { name = "seaborn", specifier = ">=0.13.2" },
+    { name = "tftb", specifier = ">=0.1.4" },
 ]
 
 [[package]]
@@ -1118,6 +1120,17 @@ sdist = { url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/1a/4c/9b
 wheels = [
     { url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/96/00/2b325970b3060c7cecebab6d295afe763365822b1306a12eeab198f74323/starlette-0.41.3-py3-none-any.whl", hash = "sha256:44cedb2b7c77a9de33a8b74b2b90e9f50d11fcf25d8270ea525ad71a25374ff7", size = 73225 },
 ]
+
+[[package]]
+name = "tftb"
+version = "0.1.4"
+source = { registry = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple" }
+dependencies = [
+    { name = "matplotlib" },
+    { name = "numpy" },
+    { name = "scipy" },
+]
+sdist = { url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/17/7d/4ea3d1d9c1b510efe0a0b3765055da080cc3185092537a92e06aaee14177/tftb-0.1.4.tar.gz", hash = "sha256:747e8080d03c12f1eb198e7337ca0eb5c9b39d6df41f437863f19b0eb10c962c", size = 402840 }
 
 [[package]]
 name = "tomlkit"

@@ -266,5 +266,45 @@ def __(
     return
 
 
+@app.cell(hide_code=True)
+def __(mo):
+    mo.md(r"""## WVD""")
+    return
+
+
+@app.cell
+def __():
+    # PyTFTB uses deprecated SciPy functions, leading to ImportError.
+    # However, we do not actually use those functions.
+    # To circumvent it, let us lie to the interpreter.
+    # https://github.com/scikit-signal/tftb/pull/180
+    import scipy
+
+    scipy.integrate.trapz = scipy.integrate.trapezoid
+    scipy.signal.hamming = scipy.signal.windows.hamming
+
+    from tftb.processing import WignerVilleDistribution
+    return WignerVilleDistribution, scipy
+
+
+@app.cell
+def __(WignerVilleDistribution, data, plt):
+    spec = WignerVilleDistribution(
+        # WVD要求信号点数必须是偶数
+        data.to_numpy()[: data.len() // 2 * 2]
+    )
+    spec.run()
+
+    spec.plot(kind="contour", show_tf=True, show=False)
+    plt.gcf()
+    return (spec,)
+
+
+@app.cell
+def __(spec):
+    spec.tfr.min()
+    return
+
+
 if __name__ == "__main__":
     app.run()
