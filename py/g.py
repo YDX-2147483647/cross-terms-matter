@@ -405,9 +405,9 @@ def __(
             Bbox([[4.8, _f - 0.1], [12, _f + 0.1]]),
             boxstyle="round,pad=0.1",
             fill=False,
-            edgecolor="red",
+            edgecolor="gray",
         )
-        _ax.text(x=3, y=_f - 0.1, s=f"{_f:.1f} Hz", color="red")
+        _ax.text(x=3, y=_f - 0.1, s=f"{_f:.1f} Hz", color="black")
 
     savefig(_fig, "wvd-spectrogram")
     return
