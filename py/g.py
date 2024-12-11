@@ -37,7 +37,7 @@ def __():
     return (pl,)
 
 
-@app.cell
+@app.cell(hide_code=True)
 def __(__file__):
     from pathlib import Path
 
@@ -45,14 +45,14 @@ def __(__file__):
     return Path, ROOT_DIR
 
 
-@app.cell
+@app.cell(hide_code=True)
 def __(mo):
     should_save = mo.ui.checkbox(label="Save figures")
     should_save
     return (should_save,)
 
 
-@app.cell
+@app.cell(hide_code=True)
 def __(ROOT_DIR, plt, should_save):
     fig_dir = ROOT_DIR / "fig"
     fig_dir.mkdir(exist_ok=True)
@@ -441,7 +441,7 @@ def __(
     )
     _fig.colorbar(_c)
 
-    _axs[1].set(title="时域", ylabel=r"加速度 / ($\text{m/s^2}$)")
+    _axs[1].set(title="时域", ylabel=r"加速度 / ($\text{m}/\text{s}^2$)")
     _axs[1].plot(time, data, label="实测")
     _axs[1].plot(
         time,
