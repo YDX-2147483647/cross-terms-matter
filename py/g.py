@@ -326,7 +326,7 @@ def __(mo):
 
         - ✅[`wignerdpy.wigner_distribution(x)` - ljbkusters/python-wigner-distribution (pywigner) - GitHub](https://github.com/ljbkusters/python-wigner-distribution)
 
-            - 😦从三年前维护到去年。
+            - 😦从三年前维护至今。
             - 😃默认用解析信号。
             - 🐇向量化计算。
         """
