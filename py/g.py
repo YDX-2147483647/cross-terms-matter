@@ -38,16 +38,48 @@ def __():
 
 
 @app.cell
-def __(__file__, pl):
+def __(__file__):
     from pathlib import Path
 
-    df = pl.read_csv(Path(__file__).parent / "data/Raw Data.csv").select(
+    ROOT_DIR = Path(__file__).parent.parent
+    return Path, ROOT_DIR
+
+
+@app.cell
+def __(mo):
+    should_save = mo.ui.checkbox(label="Save figures")
+    should_save
+    return (should_save,)
+
+
+@app.cell
+def __(ROOT_DIR, plt, should_save):
+    fig_dir = ROOT_DIR / "fig"
+    fig_dir.mkdir(exist_ok=True)
+
+
+    def savefig(fig: plt.Figure, name: str) -> plt.Figure:
+        if should_save.value:
+            fig.savefig(fig_dir / f"g-{name}.png")
+        return fig
+    return fig_dir, savefig
+
+
+@app.cell(hide_code=True)
+def __(mo):
+    mo.md(r"""## 读取数据""")
+    return
+
+
+@app.cell
+def __(ROOT_DIR, pl):
+    df = pl.read_csv(ROOT_DIR / "py/data/Raw Data.csv").select(
         [
             pl.col("Time (s)").alias("时间 / s"),
             pl.col("Linear Acceleration y (m/s^2)").alias("加速度 / (m/s²)"),
         ]
     )
-    return Path, df
+    return (df,)
 
 
 @app.cell
@@ -90,7 +122,7 @@ def __():
 
 
 @app.cell(hide_code=True)
-def __(data, fs, peak_freqs, plt, signal):
+def __(data, fs, peak_freqs, plt, savefig, signal):
     _fig, _ax = plt.subplots()
     _ax.semilogy(*signal.periodogram(data, fs=fs), "+", label="原始")
     _ax.semilogy(
@@ -113,7 +145,7 @@ def __(data, fs, peak_freqs, plt, signal):
             color="red",
         )
 
-    _fig
+    savefig(_fig, "periodogram")
     return
 
 
@@ -147,7 +179,7 @@ def __(peak_freqs):
 
 
 @app.cell(hide_code=True)
-def __(data, fs, np, peak_freqs, plt, signal):
+def __(data, fs, np, peak_freqs, plt, savefig, signal):
     _fig, _ax = plt.subplots()
     _ax.semilogy(*signal.periodogram(data, fs=fs), "+", label="原始")
     _ax.semilogy(
@@ -171,7 +203,7 @@ def __(data, fs, np, peak_freqs, plt, signal):
             color="red",
         )
 
-    _fig
+    savefig(_fig, "periodogram-zoom")
     return
 
 
@@ -234,6 +266,7 @@ def __(
     np,
     peak_freqs,
     plt,
+    savefig,
     time,
     win_std,
 ):
@@ -262,7 +295,7 @@ def __(
         )
         _ax.text(x=3, y=_f - 0.1, s=f"{_f:.1f} Hz", color="red")
 
-    _fig
+    savefig(_fig, f"stft-spectrogram-{win_std.value}")
     return
 
 
@@ -345,6 +378,7 @@ def __(
     np,
     peak_freqs,
     plt,
+    savefig,
     spec,
     spec_max_freq,
     time,
@@ -375,12 +409,22 @@ def __(
         )
         _ax.text(x=3, y=_f - 0.1, s=f"{_f:.1f} Hz", color="red")
 
-    _fig
+    savefig(_fig, "wvd-spectrogram")
     return
 
 
 @app.cell(hide_code=True)
-def __(data, max_spec, np, peak_freqs, plt, spec, spec_max_freq, time):
+def __(
+    data,
+    max_spec,
+    np,
+    peak_freqs,
+    plt,
+    savefig,
+    spec,
+    spec_max_freq,
+    time,
+):
     _fig, _axs = plt.subplots(nrows=2, sharex=True, layout="constrained")
 
     _axs[0].set(
@@ -411,7 +455,7 @@ def __(data, max_spec, np, peak_freqs, plt, spec, spec_max_freq, time):
         _ax.grid()
     _axs[-1].set(xlabel=time.name, xlim=(4.5, 8))
 
-    _fig
+    savefig(_fig, "wvd-compare")
     return
 
 
