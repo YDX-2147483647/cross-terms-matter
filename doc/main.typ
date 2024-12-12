@@ -570,3 +570,7 @@ $ 2 Re W_(x y) prop abs(W_(x' y')) ** cos(2pi ((f_x - f_y) t - (t_x - t_y) f) + 
 
 #text(green, $x thick x'$)
 #text(purple, $y thick y'$)
+
+=== 4交叉项显现到时域·拍频
+
+$ hl(integral dif f) $
