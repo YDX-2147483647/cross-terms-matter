@@ -259,6 +259,8 @@ $ 1-epsilon >= integral.double_(RR^2) (((t-t_0) / sigma_t)^2 + ((f-f_0) / sigma_
   )
 }
 
+// 那函数是一种WVD的充要条件是什么？
+
 = 例子
 
 == 有无交叉项——正负波包
@@ -359,6 +361,8 @@ $
 
   - 相空间：旋转轨迹切向的导数为零。
   - 时域：该场景的Schrödinger方程对应FrFT。
+
+// 未能成功的思路：旋转WVD再累加，反推出FrFT的自相关
 
 = WVD 的性质
 
@@ -493,7 +497,7 @@ $
   $
   $
     I(t,f)
-    = 2  WVD_(x, y)(t-t_(12),f-f_(12)) cos[2pi(v_(12)t-f tau_(12))]
+    = 2  abs(WVD_(x, y)(t-t_(x y),f-f_(x y))) cos[2pi(v_(x y)t-f tau_(x y))+ phi]
   $
 #pagebreak()
 == 徐
