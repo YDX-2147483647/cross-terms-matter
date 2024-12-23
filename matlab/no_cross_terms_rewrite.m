@@ -11,16 +11,18 @@ random_seed = 42;
 
 %% 构造信号
 
-t0 = 0.2; % 时间偏移
-f0 = 50; % 频率偏移
-t1 = 0.3;
-f1 = 100;
+t1 = 0.2; % 时间偏移
+f1 = 50; % 频率偏移
+t2 = 0.3;
+f2 = 100;
 fs = 1000; % 采样率
 T = 1; % 信号持续时间
 t = 0:1 / fs:T - 1 / fs; % 时间序列
 sigma = 0.01 * sqrt(2 * pi);
-x1 = exp(2 * pi * (- ((t - t0) / sigma) .^ 2/2 + 1i * f0 * (t - t0)));
-x2 = exp(2 * pi * (- ((t - t1) / sigma) .^ 2/2 + 1i * f1 * (t - t1)));
+x1 = exp(2 * pi * (- ((t - t1) / sigma) .^ 2/2 + 1i * f1 * (t - t1)));
+x2 = exp(2 * pi * (- ((t - t2) / sigma) .^ 2/2 + 1i * f2 * (t - t2)));
+
+n_time = length(t);
 
 %% 准备WVD分量
 
@@ -30,6 +32,21 @@ wvd_1 = real(xwvd(x1, x1, fs));
 wvd_2 = real(xwvd(x2, x2, fs));
 wvd_12 = xwvd(x1, x2, fs);
 [wvd_21, f, t] = xwvd(x2, x1, fs);
+
+% FFT归一化导致增加倍数`n_time`？
+theoretical_peak = sqrt(2) * sigma * n_time;
+% `xwvd`只考虑非负时间差导致能量差一半
+assert(abs(theoretical_peak / 2 / max(wvd_1, [], 'all') - 1) < 0.05)
+assert(abs(theoretical_peak / 2 / max(wvd_2, [], 'all') - 1) < 0.05)
+
+% `xwvd`只考虑非负时间差，导致一个互WVD为零，另一个正常
+if t1 < t2
+    assert(max(abs(wvd_12), [], 'all') < 1e-6);
+    assert(abs(theoretical_peak / max(abs(wvd_21), [], 'all') -1) < 0.05);
+else
+    assert(max(abs(wvd_21), [], 'all') < 1e-6);
+    assert(abs(theoretical_peak / max(abs(wvd_12), [], 'all') -1) < 0.05);
+end
 
 %% 验证计算误差足够小
 
@@ -89,16 +106,16 @@ for n = n_sample_list
 end
 
 %% 仿真并测量交叉项强度——以交叉项时频中心为原点框定矩形区域
-f_cross = (f0 + f1) / 2;
-t_cross = (t0 + t1) / 2;
+f_cross = (f1 + f2) / 2;
+t_cross = (t1 + t2) / 2;
 
-df_cross = 25;
-dt_cross = 0.01;
-f_cross_range = (f_cross + [-1, 1] * df_cross) / fs;
-t_cross_range = (t_cross + [-1, 1] * dt_cross) / T;
+df_cross = 0.5 / sigma;
+dt_cross = 0.5 * sigma;
+f_cross_range = f_cross + [-1, 1] * df_cross;
+t_cross_range = t_cross + [-1, 1] * dt_cross;
 
-f_cross_index_range = round(f_cross_range * length(f));
-t_cross_index_range = round(t_cross_range * length(t));
+f_cross_index_range = round(f_cross_range / f(end) * length(f));
+t_cross_index_range = round(t_cross_range / t(end) * length(t));
 
 %% 仿真并测量交叉项强度——为更准确，多次测量取平均
 % （仿真Wigner分布不能多次测量取平均）
@@ -139,7 +156,7 @@ for i = 1:length(n_sample_list)
     cross_intensity(:, i) = max(abs(d), [], [2, 3]);
 end
 
-save("data/cross_intensity.mat", "n_sample_list", "cross_intensity")
+save("data/cross_intensity.mat", "n_sample_list", "cross_intensity", "sigma", "n_time")
 
 %% 仿真并测量交叉项强度——绘图
 
@@ -147,11 +164,11 @@ save("data/cross_intensity.mat", "n_sample_list", "cross_intensity")
 
 % mean/std over #repeat
 mu = mean(cross_intensity, 1);
-sigma = std(cross_intensity, 1);
+sigma_std = std(cross_intensity, 1);
 loglog(n_sample_list, mu, "DisplayName", "μ");
 hold on
-loglog(n_sample_list, mu + sigma, "DisplayName", "μ + σ", "LineStyle", "--");
-loglog(n_sample_list, mu - sigma, "DisplayName", "μ - σ", "LineStyle", "--");
+loglog(n_sample_list, mu + sigma_std, "DisplayName", "μ + σ", "LineStyle", "--");
+loglog(n_sample_list, mu - sigma_std, "DisplayName", "μ - σ", "LineStyle", "--");
 hold off
 grid
 legend
