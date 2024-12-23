@@ -2,7 +2,7 @@
 % 反复计算WVD太慢，改为提前算好分量，之后线性组合。
 
 % 计算WVD用的样本量
-n_sample_list = [10, 100, 500, 1000, 2000, 5000];
+n_sample_list = [1, 10, 100, 500, 1000, 2000, 5000];
 % 测量交叉项时的重复次数
 n_repeat = 100;
 
@@ -18,9 +18,9 @@ f1 = 100;
 fs = 1000; % 采样率
 T = 1; % 信号持续时间
 t = 0:1 / fs:T - 1 / fs; % 时间序列
-sigma = 0.01;
-x1 = exp(- (t - t0) .^ 2 / (2 * sigma ^ 2)) .* exp(1i * 2 * pi * f0 * (t - t0));
-x2 = exp(- (t - t1) .^ 2 / (2 * sigma ^ 2)) .* exp(1i * 2 * pi * f1 * (t - t1));
+sigma = 0.01 * sqrt(2 * pi);
+x1 = exp(2 * pi * (- ((t - t0) / sigma) .^ 2/2 + 1i * f0 * (t - t0)));
+x2 = exp(2 * pi * (- ((t - t1) / sigma) .^ 2/2 + 1i * f1 * (t - t1)));
 
 %% 准备WVD分量
 
@@ -28,6 +28,16 @@ x2 = exp(- (t - t1) .^ 2 / (2 * sigma ^ 2)) .* exp(1i * 2 * pi * f1 * (t - t1));
 % 1. `wvd(x)`与`xwvd(x, x)`、`xwvd(x, y)`与`conj(xwvd(y, x))`等有不是特别大但不容忽视的差别。
 % 2. `xwvd`的文档中写的是第一个参数不共轭，第二个参数共轭，但实际似乎是反的。
 % 3. 对于短的复信号，`xwvd`明显偏离双线性，例如`xwvd([1, 0, 0], [j, 0, 0]) - j * xwvd([1, 0, 0], [1, 0, 0])`均方根为 0.16。
+%
+% 在MATLAB运行以下命令可查看源代码。
+%     edit wvd
+%     edit signalwavelet.internal.wvd.wvdImpl
+%     edit xwvd
+%     edit signalwavelet.internal.wvd.xwvdImpl
+% MATLAB会给WVD结果的时间上采样：自相关中，平均时刻可取半整数，时间差只取整数。
+% 平均时刻为整数时，自相关用 x(t) x(t)' + x(t-1) x(t+1)' + …，然后直接`fft`存到`wvdMat`；
+% 平均时刻为半整数时，自相关改用 x(t-1/2) x(t+1/2)' + …（这样宗量仍是整数）间接推测，用十几行才存进`wvdMat`。
+
 
 wvd_1 = real(xwvd(x1, x1, fs));
 wvd_2 = real(xwvd(x2, x2, fs));
@@ -37,12 +47,39 @@ wvd_12 = xwvd(x1, x2, fs);
 %% 验证计算误差足够小
 
 c = 1 + 2j;
-difference = real(xwvd(x1 + c * x2, x1 + c * x2, fs)) - real( ...
-    wvd_1 + abs(c) ^ 2 * wvd_2 + c * wvd_12 + conj(c) * wvd_21 ...
-);
-diverging_imagesc(t, f, difference);
 
-assert(max(abs(difference), [], "all") < 1e-6);
+by_wvd = wvd(x1 + c * x2, fs);
+by_xwvd = real(xwvd(x1 + c * x2, x1 + c * x2, fs));
+by_composition = real(wvd_1 + abs(c) ^ 2 * wvd_2 + c * wvd_12 + conj(c) * wvd_21);
+
+layout = tiledlayout("flow");
+nexttile;
+diverging_imagesc(t, f, by_wvd);
+title("By “wvd”")
+nexttile;
+diverging_imagesc(t, f, by_xwvd);
+title("By “xwvd”")
+nexttile;
+diverging_imagesc(t, f, by_composition);
+title("By composition")
+nexttile;
+diverging_imagesc(t, f, by_composition - by_wvd);
+title("Difference (by composition - by “wvd”)")
+
+% layout.Children 还含 ColorBar，要去掉
+axs = layout.Children(arrayfun(@(ax) isa(ax, 'matlab.graphics.axis.Axes'), layout.Children))';
+
+linkaxes(axs)
+axs(1).XLim = [0.15, 0.35];
+axs(1).YLim = [20, 130];
+
+for ax = axs
+    xlabel(ax, "时间");
+    ylabel(ax, "频率");
+end
+
+assert(max(abs(by_composition - by_xwvd), [], "all") < 1e-6);
+fprintf("Max difference (by composition - by “wvd”): %.1f.\n", max(abs(by_composition - by_wvd), [], "all"));
 
 %% 仿真Wigner分布
 

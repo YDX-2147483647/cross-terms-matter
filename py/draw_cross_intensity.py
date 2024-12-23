@@ -3,7 +3,7 @@
 from pathlib import Path
 
 import numpy as np
-from pandas import DataFrame
+import polars as pl
 from scipy.io import loadmat
 from seaborn import lineplot
 
@@ -22,11 +22,25 @@ assert n_sample_list.ndim == 1
 assert cross_intensity.ndim == 2
 assert cross_intensity.shape[1] == n_sample_list.shape[0]
 
-data = DataFrame(
+data = pl.DataFrame(
     {
-        "cross_intensity": cross_intensity.flat,
-        "n_sample": np.broadcast_to(n_sample_list, cross_intensity.shape).flat,
+        "cross_intensity": cross_intensity.ravel(),
+        "n_sample": np.broadcast_to(n_sample_list, cross_intensity.shape).ravel(),
     }
+)
+
+print(
+    data.group_by("n_sample")
+    .agg(
+        [
+            pl.all().mean().alias("mean"),
+            pl.all().std().alias("std"),
+            pl.all().min().alias("min"),
+            pl.all().max().alias("max"),
+            pl.all().count().alias("count"),
+        ]
+    )
+    .sort("n_sample")
 )
 
 # %% Plot
@@ -39,7 +53,6 @@ ax.set(
     xscale="log",
     ylabel="交叉项的幅度",
     yscale="log",
-    ylim=[0.8e-2, 1.2],
 )
 ax.grid(which="major")
 ax.grid(which="minor", alpha=0.2)
