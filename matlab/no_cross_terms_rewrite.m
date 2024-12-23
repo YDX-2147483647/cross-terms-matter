@@ -25,19 +25,6 @@ x2 = exp(2 * pi * (- ((t - t1) / sigma) .^ 2/2 + 1i * f1 * (t - t1)));
 %% 准备WVD分量
 
 % 因MATLAB算法问题，这里统一用`xwvd`，并区分顺序。
-% 1. `wvd(x)`与`xwvd(x, x)`、`xwvd(x, y)`与`conj(xwvd(y, x))`等有不是特别大但不容忽视的差别。
-% 2. `xwvd`的文档中写的是第一个参数不共轭，第二个参数共轭，但实际似乎是反的。
-% 3. 对于短的复信号，`xwvd`明显偏离双线性，例如`xwvd([1, 0, 0], [j, 0, 0]) - j * xwvd([1, 0, 0], [1, 0, 0])`均方根为 0.16。
-%
-% 在MATLAB运行以下命令可查看源代码。
-%     edit wvd
-%     edit signalwavelet.internal.wvd.wvdImpl
-%     edit xwvd
-%     edit signalwavelet.internal.wvd.xwvdImpl
-% MATLAB会给WVD结果的时间上采样：自相关中，平均时刻可取半整数，时间差只取整数。
-% 平均时刻为整数时，自相关用 x(t) x(t)' + x(t-1) x(t+1)' + …，然后直接`fft`存到`wvdMat`；
-% 平均时刻为半整数时，自相关改用 x(t-1/2) x(t+1/2)' + …（这样宗量仍是整数）间接推测，用十几行才存进`wvdMat`。
-
 
 wvd_1 = real(xwvd(x1, x1, fs));
 wvd_2 = real(xwvd(x2, x2, fs));

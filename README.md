@@ -63,3 +63,75 @@
     ```
 
     （uv 会自动创建虚拟环境，安装各种包。）
+
+## 真假虚实WVD
+
+[Python提供的`wignerdpy.wigner_distribution`](https://github.com/ljbkusters/python-wigner-distribution)简洁可控；而 MATLAB Signal Processing 工具箱提供的`wvd`、`xwvd`则有若干复杂细节，且尽管提供了很多选项，但多是针对加窗平滑，并不支持控制实现细节。
+
+在MATLAB运行以下命令可查看源代码。
+
+```matlab
+edit wvd
+edit signalwavelet.internal.wvd.wvdImpl
+edit xwvd
+edit signalwavelet.internal.wvd.xwvdImpl
+```
+
+### 实信号被强制转为解析信号
+
+```matlab
+>> x = [1, 0, 0];
+>> difference = wvd(x) - wvd(x + 1e-6 * j);
+>> std(difference, [], "all")
+0.3042
+```
+
+如果输入信号的虚部为零（`if ~any(imag(…))`），会被替换成解析信号。
+
+### `xwvd`不共轭对称
+
+```matlab
+>> x = [1 + 1e-6 * j, 0, 0];
+>> y = [0, x(1), 0];
+>> difference = xwvd(x, y) - conj(xwvd(y,x));
+>> std(difference, [], "all")
+0.3554
+```
+
+`xwvd`计算瞬时自相关时，只考虑了非负的时间差，没考虑负时间差。
+
+尽管`xwvd`的文档写`x (n + m/2) y^* (n - m/2)`中`m`的取值范围是`-N, 1-N, …, N`，但实际实现是`0, 1, …, 2N-1`（`n ± m/2`超出原信号范围时（`isNoTimeSupport`），瞬时自相关取零）。
+
+### 自WVD用`wvd`和`xwvd`算出来不同
+
+```matlab
+>> x = [1 + 1e-6 * j, 0, 0];
+>> difference = xwvd(x, x) - wvd(x);
+>> std(difference, [], "all")
+0.0840
+```
+
+无论哪个函数，都保证输出WVD的时间采样率是输入信号的两倍。换算成瞬时自相关，也就是双倍上采样平均时刻，允许它取整数和半整数；不过时间差仍只取整数。
+
+然而两个函数双倍上采样的实现方法不同。
+
+- `wvd`并不修改输入信号。
+
+  - 平均时刻为整数时，瞬时自相关正常用`x(n) * x(n)', x(n-1) * x(n+1)', …`，然后直接`fft`存到`wvdMat`；
+  
+  - 平均时刻为半整数时，瞬时自相关改用`x(n-1/2) * x(n+1/2)', x(n-3/2) * x(n+3/2)', …`（这样宗量仍是整数）间接推测，用十几行才存进`wvdMat`。
+
+    另：这十几行恐怕实现错了。`wvdImpl.m`的注释写`W[k,2n+1] = Imag[DFT{Khat[m,2n+1]}]*csc(pi*k/N)`，但实际实现是先`Imag`再`DFT`，反了。这导致瞬时自相关这些点的实部信息直接丢失。
+
+- `xvwd`则修改输入信号。
+
+  它会先用`interp1`给输入信号双倍上采样，再用普通方法计算瞬时自相关，然后直接`fft`存到`wvdMat`。
+
+
+### `wvd`的其它实现细节
+
+瞬时自相关共轭对称，MATLAB利用这一点“简化”了`wvd`。
+
+`wvd`会先算非负的时间差（存为`mnMat`，`m`为时间差，`n`为平均时刻），再把正时间差的结果复制到负时间差，两部分拼成`kMat`作为瞬时自相关。
+
+瞬时互相关本身并不共轭对称，`xwvd`只算`kMat`，没有`mnMat`——其实[`xwvd`根本没考虑负时间差](#xwvd不共轭对称)。
