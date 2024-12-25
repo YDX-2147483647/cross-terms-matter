@@ -1,9 +1,12 @@
 #import "@preview/cetz:0.3.1"
 
+#import "@preview/quick-maths:0.2.0": shorthands
+#show: shorthands.with(($**$, $times$))
+
 #import "alias.typ": *
 
 #set page(height: auto)
-#pagebreak()
+
 = 幻灯片
 
 == 薛

@@ -1,8 +1,9 @@
 #import "@preview/quick-maths:0.2.0": shorthands
 #show: shorthands.with(($**$, $times$))
 
-#import "template.typ": project, table-header, thin-hline, bilingual-bibliography
+#import "template.typ": project, table-header, thin-hline
 #show: project.with(
+  headline: "非平稳信号处理·考核论文",
   title: "Wigner–Ville分布中交叉项的意义",
   authors: (
     (name: "薛龙斌", email: "3120245441@bit.edu.cn", id: "3120245441"),
@@ -12,6 +13,10 @@
 )
 
 #import "alias.typ": *
+
+#heading(numbering: none)[摘要]
+
+#lorem(30)
 
 = 意义
 
@@ -437,7 +442,3 @@ $
   &= WVD_x (t',f') conv_(2t')^(2t) conv_(2f')^(2f) WVD_y (t',f') \
   &= integral.double_(RR^2) W_x (t + t' / 2, f + f' / 2) ** W_y (t - t' / 2, f - f' / 2) dif t' dif f'.
 $
-
-#bilingual-bibliography(bibliography: bibliography.with("ref.bib"))
-
-#include "slide-fragment.typ"
