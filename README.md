@@ -4,7 +4,12 @@
 
 - [`doc/`](./doc/)
 
-  这是个typst项目，主要[在 typst.app 编写](https://typst.app/project/ryphBqBZzGVrPAG73GgFBE)，此处仅作备份。
+  这是个 typst v0.12.0 项目，主要[在 typst.app 编写](https://typst.app/project/ryphBqBZzGVrPAG73GgFBE)，此处仅作备份。 
+
+  ```shell
+  $ cd ./doc/
+  $ typst compile main.typ
+  ```
 
   <details>
   <summary>大纲</summary>
