@@ -1,7 +1,7 @@
 #import "@preview/quick-maths:0.2.0": shorthands
 #show: shorthands.with(($**$, $times$))
 
-#import "template.typ": project, table-header, thin-hline
+#import "template.typ": project, table-header, thin-hline, subpar-grid
 #show: project.with(
   headline: "非平稳信号处理·考核论文",
   title: "Wigner–Ville分布中交叉项的意义",
@@ -38,16 +38,15 @@ Fourier变换、Wigner–Ville分布的“刚性”比较强，它们不像短�
 
 = WVD可以没有交叉项吗？
 
-不同于STFT对信号的线性表示，WVD是一种非线性变换，是双线性形式的时频分布[文献]。假如某一个信号含有多个不同的信号分量，利用WVD对信号做时频分析的时候，这就不可避免地要讨论交叉项这个问题。对于含有多个不同信号分量的的确知信号，利用WVD分析该信号的时频特性。这时，时频平面上一定会出现交叉项，这在2.1.2.2将会有详细的讨论。而对于含有多个不同信号分量的随机信号，我们更关心集体的平均效果，信号的演变谱就等于该信号WVD的数学期望。由于随机信号的演变谱在WVD的基础上又求了数学期望，因此随机信号的演变谱中交叉项有可能为零，交叉线不会出现再时频平面中，也就是没有交叉项。
+// TODO（徐元昌）：“2.1.2.2”是哪里？
+不同于STFT对信号的线性表示，WVD是一种非线性变换，是双线性形式的时频分布@张贤达2015a。假如某一个信号含有多个不同的信号分量，利用WVD对信号做时频分析的时候，这就不可避免地要讨论交叉项这个问题。对于含有多个不同信号分量的的确知信号，利用WVD分析该信号的时频特性。这时，时频平面上一定会出现交叉项，这在2.1.2.2将会有详细的讨论。而对于含有多个不同信号分量的随机信号，我们更关心集体的平均效果，信号的演变谱就等于该信号WVD的数学期望。由于随机信号的演变谱在WVD的基础上又求了数学期望，因此随机信号的演变谱中交叉项有可能为零，交叉线不会出现再时频平面中，也就是没有交叉项。
 
-我们构造了一个随机信号，该随机信号含有两个信号分量，两个信号分量之间相差一个均匀分布的随机相位。该信号的演变谱将没有交叉项，这点可以从数学上去证明。此外，我们进行了Monte-Carlo仿真实验，进一步验证我们的猜想。
+我们构造了一个随机信号，该随机信号含有两个信号分量，两个信号分量之间相差一个均匀分布的随机相位。该信号的演变谱将没有交叉项，这点可以从数学上去证明。此外，我们进行了Monte Carlo仿真实验，进一步验证我们的猜想。
 
 构造含有两个信号分量的随机信号形式如下：
-
 $
   X(t) = x_1 (t) + C x_2(t),
 $
-
 其中，$x_1 (t)$ 和 $x_2 (t)$ 是确定信号，$C = e^(j phi)$，$phi ~ U(0, 2 pi)$。
 
 == 数学证明
@@ -67,19 +66,17 @@ $
     C x_1 (t+tau/2) x_2^*(t-tau/2) e^(-j 2pi f tau) dif tau \
   &quad + expect integral_RR
     abs(C)^2 x_2(t+tau/2) x_2^*(t-tau/2) e^(-j 2pi f tau) dif tau.
-$
-式(2)中，第一项和第三项为自项，第二项为交叉项。
+$ <eq:expect-wvd>
+@eq:expect-wvd 中，第一项和第三项为自项，第二项为交叉项。
 
-第二项交叉项可以利用两个信号之间的相位差 $phi$ 服从 $[0, 2pi]$之间的均匀分布进一步写作：
-
+第二项交叉项可以利用两个信号之间的相位差 $phi$ 服从 $[0, 2pi]$ 之间的均匀分布进一步写作：
 $
   & 2 Re expect integral_RR C x_1(t+tau/2)x_2^*(t-tau/2) e^(-j 2pi f tau) dif tau \
   & = 2 Re integral_RR dif tau integral_0^(2pi) (dif phi)/(2pi) C x_1(t+tau/2) x_2^*(t-tau/2) e^(-j 2pi f tau) \
   & = 2 Re integral_0^(2pi) C (d phi)/(2pi) **
     integral_RR x_1(t+tau/2)x_2^*(t-tau/2) e^(-j 2pi f tau) dif tau.
-$
-
-式(3)中，$integral_0^(2pi) C (d phi)/(2pi) = 0$，所以随机信号 $X(t)$ 演变谱的交叉项为0，也就是刚好没有交叉项。
+$ <eq:expect-cross>
+@eq:expect-cross 中，$integral_0^(2pi) C (dif phi)/(2pi) = 0$，所以随机信号 $X(t)$ 演变谱的交叉项为0，也就是刚好没有交叉项。
 
 
 
@@ -88,44 +85,44 @@ $
   caption: [TODO：理论差个系数],
 )
 
-== Monte-Carlo实验
+== Monte Carlo实验
 
-我们对构造的随机信号 $X(t)$ 的演变谱进行了Monte-Carlo仿真实验,实验中随机选择相位 $phi$，10次、100次、500次、1000次、2000次Monte-Carlo实验的结果如图2所示。当实验次数分别为10次、100次和500次时，交叉项隐约可以看到，但是交叉项随着仿真次数的增加啊会变得更小。进一步增加实验次数至1000次、2000次，交叉项基本消失。
+我们对构造的随机信号 $X(t)$ 的演变谱进行了Monte Carlo仿真实验，实验中随机选择相位 $phi$，10次、100次、500次、1000次、2000次Monte Carlo实验的结果如@fig:WignerNoCrossterms 所示。当实验次数分别为10次、100次和500次时，交叉项隐约可以看到，但是交叉项随着仿真次数的增加啊会变得更小。进一步增加实验次数至1000次、2000次，交叉项基本消失。
 
-我们选择交叉项绝对值的最大值作为交叉项的幅度，基于此分析交叉项的Monte-Carlo实验的仿真结果与理论值的偏差，结果如图2 (f)所示。随着样本数量的增加，交叉项的幅度会变得更小，这进一步印证了所构造的信号的演变谱没有交叉项。
+我们选择交叉项绝对值的最大值作为交叉项的幅度，基于此分析交叉项的Monte Carlo实验的仿真结果与理论值的偏差，结果如@fig:cross_intensity 所示。随着样本数量的增加，交叉项的幅度会变得更小，这进一步印证了所构造的信号的演变谱没有交叉项。
 
-#figure(grid(columns: 3, rows: 2,
-  figure(image("fig/10次MC仿真.png", width: auto), numbering: none, caption: [(a) 10次实验]),
-  figure(image("fig/100次MC仿真.png", width: auto), numbering: none, caption: [(b) 100次实验]),
-  figure(image("fig/500次MC仿真.png", width: auto), numbering: none, caption: [(c) 500次实验]),
-  figure(image("fig/1000次MC仿真.png", width: auto), numbering: none, caption: [(d) 1000次实验]),
-  figure(image("fig/2000次MC仿真.png", width: auto), numbering: none, caption: [(e) 2000次实验]),
-  figure(image("fig/cross_intensity.png", width: auto), numbering: none, caption: [(f) 仿真与理论误差]),
+#subpar-grid(
+  columns: 3,
+  figure(image("fig/10次MC仿真.png"), caption: [10次实验]),
+  figure(image("fig/100次MC仿真.png"), caption: [100次实验]),
+  figure(image("fig/500次MC仿真.png"), caption: [500次实验]),
+  figure(image("fig/1000次MC仿真.png"), caption: [1000次实验]),
+  figure(image("fig/2000次MC仿真.png"), caption: [2000次实验]),
+  figure(image("fig/cross_intensity.png"), caption: [仿真与理论误差]), <fig:cross_intensity>,
+  caption: [Monte Carlo实验结果及误差分析],
+  label: <fig:WignerNoCrossterms>,
 )
-, caption: [Monte-Carlo实验结果及误差分析])
 
 = 交叉项的物理意义及几何特征
 
 == 交叉项的时域定性理解
 
-== 互WVD的平移性质
+== 互WVD的平移性质 <sec:shift>
 
-假设确定信号 $x(t)$ 包含两个信号分量 $x_1(t)$ 和 $x_2(t)$，即 $x(t)=x_1(t)+x_2(t)$，信号 $x(t)$ 的WVD记为 。根据时频分布的二次叠加原理和互WVD的共轭性质可以得到 $WVD_(x)(t,f)$ 由三部分组成，分别是自项 $WVD_(x_1)(t,f)$  、$WVD_(x_2)(t,f)$ 和交叉项 $2Re WVD_(x_1,x_2)(t,f)$，如公式(4)所示。
-
+假设确定信号 $x(t)$ 包含两个信号分量 $x_1(t)$ 和 $x_2(t)$，即 $x(t)=x_1(t)+x_2(t)$，信号 $x(t)$ 的WVD记为 。根据时频分布的二次叠加原理和互WVD的共轭性质可以得到 $WVD_(x)(t,f)$ 由三部分组成，分别是自项 $WVD_(x_1)(t,f)$、$WVD_(x_2)(t,f)$ 和交叉项 $2Re WVD_(x_1,x_2)(t,f)$，如@eq:wvd-components 所示。
 $
-  WVD_(x)(t,f) = WVD_(x_1)(t,f) + WVD_(x_2)(t,f) + 2Re WVD_(x_1,x_2)(t,f).
-$
+  WVD_(x)(t,f) = WVD_(x_1)(t,f) + WVD_(x_2)(t,f) + 2Re WVD_(x_1,x_2)(t,f),
+$ <eq:wvd-components>
 其中，$WVD_(x_1,x_2)(t,f)$ 是信号分量 $x_1(t)$ 和 $x_2(t)$ 的互WVD。可以看到，信号的交叉项主要与信号分量的互WVD有关。
 
-如果信号分量 $x_1(t)$ 经过时间为 $t_1$ 延时和频率为 $f_1$ 的调制变为 $x'_1(t)$;信号分量 $x_2(t)$ 经过时间为 $t_2$ 延时和频率为 $f_2$ 的调制变为 $x'_2(t)$，则新的信号 $x’(t)$ 为：
+如果信号分量 $x_1(t)$ 经过时间为 $t_1$ 延时和频率为 $f_1$ 的调制变为 $x'_1(t)$；信号分量 $x_2(t)$ 经过时间为 $t_2$ 延时和频率为 $f_2$ 的调制变为 $x'_2(t)$，则新的信号 $x'(t)$ 为：
 $
   x'(t) & = x'_1(t) + x'_2(t) \
         & = x_1(t-t_1)e^(j 2 pi f_1) + x_1(t-t_2)e^(j 2 pi f_2).
 $
-新信号$x’(t)$中两个信号分量的互WVD应该怎么改变，这将决定交叉项如何改变。
+新信号 $x'(t)$ 中两个信号分量的互WVD应该怎么改变，这将决定交叉项如何改变。
 
 在上述情况下，互WVD的平移性质为：
-
 $
   WVD_(x'_1, x'_2)(t,f) = e^(-j 2pi f (t_1-t_2))e^(j 2pi t (f_1-f_2))WVD_(x_1, x_2)(t-(t_1+t_2)/2,f-(f_1+f_2)/2). 
 $
@@ -178,7 +175,7 @@ $
 
 == 交叉项的几何特征
 
-两信号分量的确定信号可以看作时频中心重叠的两个信号分量分别经过不同的时移和频移得到的。依旧按照3.2节的思路，将 $x(t)$ 看作两个信号分量时频中心重叠的确定信号，根据互WVD的平移性质，此时信号的交叉项是缓变的。$x(t)$ 的两个信号分量分别经过时延平移和频率调制后得到 $x’(t)$，则信号 $x’(t)$ 的交叉项 $I_(x')(t,f)$ 为：
+两信号分量的确定信号可以看作时频中心重叠的两个信号分量分别经过不同的时移和频移得到的。依旧按照@sec:shift 的思路，将 $x(t)$ 看作两个信号分量时频中心重叠的确定信号，根据互WVD的平移性质，此时信号的交叉项是缓变的。$x(t)$ 的两个信号分量分别经过时延平移和频率调制后得到 $x'(t)$，则信号 $x'(t)$ 的交叉项 $I_(x')(t,f)$ 为：
 
 $
   I_(x')(t,f) & = 2Re WVD_(x_1,x_2)(t,f) \
@@ -189,31 +186,37 @@ $
 
 后面从交叉项的振荡位置、振荡疏密和振荡方向三个方面分析交叉项的几何特征。
 
-图3分别展示了两个信号分量相同和两个信号分量不同时的交叉项，从图中可以看到交叉项的振荡位置始终位于两个信号中间。交叉项 $I_(x')(t,f)$ 的振荡位置主要由 $abs(WVD_(x_1, x_2)(t-t_(12),f-f_(12)))$决定，交叉项的中心位置应该在两个信号分量时频中心连线的中点上，交叉项始终位于两个信号的自项中间。
+@fig:cross-position 分别展示了两个信号分量相同和两个信号分量不同时的交叉项，从图中可以看到交叉项的振荡位置始终位于两个信号中间。交叉项 $I_(x')(t,f)$ 的振荡位置主要由 $abs(WVD_(x_1, x_2)(t-t_(12),f-f_(12)))$决定，交叉项的中心位置应该在两个信号分量时频中心连线的中点上，交叉项始终位于两个信号的自项中间。
 
-#figure(grid(columns: 2, rows: 1,
-  figure(image("fig/两个信号分量相同时的交叉项.png", width: 90%), numbering: none, caption: [(a) 信号分量形式相同]),
-  figure(image("fig/几何特征-分量形式不同.png", width: 120%, height: 25%), numbering: none, caption: [(b) 信号分量形式相同]),
+#subpar-grid(
+  columns: (auto, auto),
+  figure(image("fig/两个信号分量相同时的交叉项.png", height: 15em), caption: [信号分量形式相同]),
+  figure(image("fig/几何特征-分量形式不同.png", height: 15em), caption: [信号分量形式相同]),
+  caption: [交叉项的振荡位置],
+  label: <fig:cross-position>,
 )
-, caption: [交叉项的振荡位置])
 
-图4展示两个分量时频中心距离不同时的交叉项。从图中可以看到，随着两个信号时频中心距离的变大，信号的振荡变得更快，振荡变得更密集。交叉项 $I_(x')(t,f)$ 的振荡疏密主要由 $cos(2pi(v_(12)t-f tau_(12))+phi)$ 决定，随着信号分量时频中心间距的变大， $v_(12)$ 和 $tau_(12)$ 会变得更大，因此交叉项的振荡会更快，在时频图中更加密集。
+@fig:cross-distance 展示两个分量时频中心距离不同时的交叉项。从图中可以看到，随着两个信号时频中心距离的变大，信号的振荡变得更快，振荡变得更密集。交叉项 $I_(x')(t,f)$ 的振荡疏密主要由 $cos(2pi(v_(12)t-f tau_(12))+phi)$ 决定，随着信号分量时频中心间距的变大，$v_(12)$ 和 $tau_(12)$ 会变得更大，因此交叉项的振荡会更快，在时频图中更加密集。
 
-#figure(grid(columns: 3, rows: 1,
-  figure(image("fig/几何特征-距离-0.8倍.png", width: auto), numbering: none, caption: [(a) 时频中心间距：0.8倍]),
-  figure(image("fig/几何特征-基本-1倍距离-π_4角度.png", width: auto), numbering: none, caption: [(b) 时频中心间距：1倍]),
-  figure(image("fig/几何特征-距离-1.7倍.png", width: auto), numbering: none, caption: [(c) 时频中心间距：1.7倍])
+#subpar-grid(
+  columns: 3,
+  figure(image("fig/几何特征-距离-0.8倍.png"), caption: [时频中心间距：$0.8$ 倍]),
+  figure(image("fig/几何特征-基本-1倍距离-π_4角度.png"), caption: [时频中心间距：$1$ 倍]),
+  figure(image("fig/几何特征-距离-1.7倍.png"), caption: [时频中心间距：$1.7$ 倍]),
+  caption: [两个信号分量时频中心距离不同时的交叉项],
+  label: <fig:cross-distance>,
 )
-, caption: [两个信号分量时频中心距离不同时的交叉项])
 
-图5展示了两个信号分量时频中心连线旋转不同角度下的交叉项。从图中可以看到，信号的振荡方向始终沿着两个信号分量的时频中心连线，也就是说交叉项振荡的等相位面平行于两个信号分量的时频中心连线。从理论上分析，交叉项 $I_(x')(t,f)$ 的振荡主要由 $cos(2pi(v_(12)t-f tau_(12))+phi)$ 决定，而$cos(2pi(v_(12)t-f tau_(12))+phi)$的等相位面平行于两个信号分量的时频中心连线。
+@fig:cross-direction 展示了两个信号分量时频中心连线旋转不同角度下的交叉项。从图中可以看到，信号的振荡方向始终沿着两个信号分量的时频中心连线，也就是说交叉项振荡的等相位面平行于两个信号分量的时频中心连线。从理论上分析，交叉项 $I_(x')(t,f)$ 的振荡主要由 $cos(2pi(v_(12)t-f tau_(12))+phi)$ 决定，而 $cos(2pi(v_(12)t-f tau_(12))+phi)$ 的等相位面平行于两个信号分量的时频中心连线。
 
-#figure(grid(columns: 3, rows: 1,
-  figure(image("fig/几何特征-旋转-0.png", width: auto), numbering: none, caption: [(a) 角度：0]),
-  figure(image("fig/几何特征-基本-1倍距离-π_4角度.png", width: auto), numbering: none, caption: [(b) 角度：$pi/4$]),
-  figure(image("fig/几何特征-旋转-π_2.png", width: auto), numbering: none, caption: [(c) 角度：$pi/2$])
+#subpar-grid(
+  columns: 3,
+  figure(image("fig/几何特征-旋转-0.png"), caption: [角度：$0$]),
+  figure(image("fig/几何特征-基本-1倍距离-π_4角度.png"), caption: [(b) 角度：$pi/4$]),
+  figure(image("fig/几何特征-旋转-π_2.png"), caption: [角度：$pi/2$]),
+  caption: [两个信号分量时频中心连线不同角度时的交叉项],
+  label: <fig:cross-direction>,
 )
-, caption: [两个信号分量时频中心连线不同角度时的交叉项])
 
 = 交叉项显现到时域
 
@@ -225,9 +228,9 @@ $
 
 = 任务分工
 
-薛龙斌：主要负责演变谱没有交叉项时的数学证明、Monte-Carlo仿真实验、互WVD平移性质的证明。
+/ 薛龙斌: 主要负责演变谱没有交叉项时的数学证明、Monte Carlo仿真实验、互WVD平移性质的证明。
 
-徐元昌：主要负责Monte-Carlo仿真实验中误差分析、交叉项几何特征分析以及图像绘制，交叉项显现到时域实验、信号与量子物理的翻译词典...(其他几乎所有，你能想到的都往上写！)。
+/ 徐元昌: 主要负责Monte Carlo仿真实验中误差分析、交叉项几何特征分析以及图像绘制，交叉项显现到时域实验、信号与量子物理的翻译词典……（其他几乎所有，你能想到的都往上写！）。
 
 = 参考文献
 

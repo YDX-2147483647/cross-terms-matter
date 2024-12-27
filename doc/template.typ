@@ -1,3 +1,20 @@
+#let palette = (
+  ref: green.darken(40%),
+  link: blue.darken(20%),
+  strike: gray,
+)
+
+#import "@preview/subpar:0.2.0"
+#let subpar-grid = subpar.grid.with(
+  show-sub: it => {
+    // Revert the `set image(width: …)` rule
+    set image(width: auto)
+    it
+  },
+)
+
+
+/// Project
 #let project(headline: "", title: "", authors: (), date: none, body) = {
   // 0. Document properties
 
@@ -57,6 +74,8 @@
 
   // 3. Main body
 
+  // Paragraphs and texts
+
   counter(page).update(1)
   set page(numbering: "1")
 
@@ -72,13 +91,42 @@
   }
   show heading: it => it + fake-par
 
+  // Miscellaneous elements
+
   show figure: set image(width: 60%)
+  show figure: it => {
+    pad(it, y: 0.5em)
+    fake-par
+  }
+
   set table(stroke: none)
 
   set math.equation(numbering: "(1)")
+  show ref: it => {
+    let el = it.element
+    if el == none {
+      it
+    } else if el.func() == math.equation {
+      link(
+        el.location(),
+        {
+          set text(palette.ref)
+          numbering(
+            "式 " + el.numbering,
+            ..counter(math.equation).at(el.location()),
+          )
+        },
+      )
+    } else {
+      it
+    }
+  }
 
-  show strike: set text(gray)
-  show link: set text(blue.darken(20%))
+  show strike: set text(palette.strike)
+  show link: set text(palette.link)
+  show ref: set text(palette.ref)
+
+  // Bibliography
 
   // Source Han Serif 的数字高度和括号不匹配
   show cite: set text(font: "Liberation Serif")
@@ -100,7 +148,9 @@
   bilingual-bibliography(bibliography: bibliography.with("ref.bib"))
 }
 
-// https://github.com/typst/typst/issues/3640#issuecomment-2395133217
+/// Styled `table.header`
+///
+/// https://github.com/typst/typst/issues/3640#issuecomment-2395133217
 #let table-header(..headers) = {
   table.header(..headers.pos().map(strong))
 }
