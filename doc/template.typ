@@ -143,9 +143,11 @@
 
   body
 
+  set par(justify: false)
   // https://typst-doc-cn.github.io/guide/FAQ/bib-etal-lang.html
   import "@preview/modern-nju-thesis:0.3.4": bilingual-bibliography
   bilingual-bibliography(bibliography: bibliography.with("ref.bib"))
+  // TODO: Fix format
 }
 
 /// Styled `table.header`
