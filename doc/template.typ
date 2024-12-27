@@ -1,4 +1,3 @@
-
 #let project(headline: "", title: "", authors: (), date: none, body) = {
   // 0. Document properties
 
