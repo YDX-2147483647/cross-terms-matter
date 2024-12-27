@@ -50,7 +50,7 @@
   show heading.where(level: 1): set text(size: 1.25em)
   show heading: pad.with(y: 0.25em)
 
-  set par(justify: true)
+  set par(justify: true, leading: 1em)
 
   outline(indent: 1em)
   pagebreak()
@@ -61,6 +61,16 @@
   set page(numbering: "1")
 
   set heading(numbering: "1.1")
+
+  set par(first-line-indent: 2em)
+  show list: set par(first-line-indent: 0em)
+  // https://typst-doc-cn.github.io/guide/FAQ/first-line-indent.html#first-line-indent-fake
+  let fake-par = context {
+    let b = par(box())
+    b
+    v(-measure(b + b).height)
+  }
+  show heading: it => it + fake-par
 
   show figure: set image(width: 60%)
   set table(stroke: none)

@@ -18,14 +18,6 @@
 
 #lorem(30)
 
-// // 设置首行缩进两字符
-// #set par(justify: true,first-line-indent: 2em) // 两端对齐，段前缩进2字符
-
-// #show heading: it =>  {
-//     it
-//     par()[#text()[#h(0.0em)]]
-// }
-
 = 介绍
 
 Fourier变换、Wigner–Ville分布的“刚性”比较强，它们不像短时Fourier变换、小波变换、Cohen类那样有人为因素（如窗的形式、尺寸、作用域）可调。它们给出的结果基本可认为是信号所固有的。如果它们给出的结论不符合人的直观，恐怕意味着人的直观需要修正，而未必是它们错了。
