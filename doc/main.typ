@@ -4,7 +4,7 @@
   ($===$, $equiv$),
 )
 
-#import "template.typ": project, table-header, thin-hline, subpar-grid
+#import "template.typ": project, table-header, thin-hline, subpar-grid, corollary, proof, parencite
 #show: project.with(
   headline: "非平稳信号处理·考核论文",
   title: "Wigner–Ville分布中交叉项的意义",
@@ -19,9 +19,9 @@
 
 #heading(numbering: none)[摘要]
 
-Wigner--Ville分布（Wigner--Ville distribution, WVD）是一种双线性形式的时频分布，这意味着WVD一般存在交叉项。首先，构造一特例让WVD中的交叉项消失。对于双分量随机信号，如果两分量的相位差随机，那么其WVD的期望可以没有交叉项。并用Monte Carlo仿真验证。其次，探究WVD的物理意义。与自项相比，WVD中的交叉项反映了分量间的稳定相位差。从时域可用自相关定性理解，从频域可用互WVD的平移性质定量理解。再次，分析WVD中交叉项的几何特征。交叉项振荡的位置、方向、疏密与信号各分量密切相关，并且可用于检测弱信号。然后，研究WVD中的交叉项显现到时域的条件。以桌子振动产生的双频信号为例验证。此外，WVD首先在量子物理领域提出，量子物理与信号分析也许存在对应关系，我们给出了其间的翻译词典。
+Wigner--Ville分布（Wigner--Ville distribution, WVD）是一种双线性形式的时频分布，这意味着WVD一般存在交叉项。首先，构造一特例让WVD中的交叉项消失。对于双分量随机信号，如果两分量的相位差随机，那么其WVD的期望可以没有交叉项。并用Monte Carlo仿真验证。其次，探究WVD的物理意义。与自项相比，WVD中的交叉项反映了分量间的稳定相位差。从时域可用自相关定性理解，从频域可用互WVD的平移性质定量理解。再次，分析WVD中交叉项的几何特征。交叉项振荡的位置、方向、疏密与信号各分量密切相关，并且可用于检测弱信号。然后，研究WVD中的交叉项显现到时域的条件。以桌子振动产生的双频信号为例验证。此外，WVD首先在量子物理领域提出，量子物理与信号分析也许存在联系，我们给出了其间的翻译词典。
 
-= 介绍
+= 介绍 <sec:intro>
 
 == WVD的双线性与交叉项
 
@@ -67,29 +67,26 @@ $
 $ <eq:expand-sum>
 其中 $Re$ 表示提取函数的实部，即 $Re WVD_(x,y) := 1/2 (WVD_(x,y) + WVD_(x,y)^*)$，而 $hat(Re)$ 表示提取函数的共轭对称成分，即 $hat(Re) R_(x,y) (t,tau) := 1/2 (R_(x,y) (t,tau) + R_(x,y)^* (t,-tau))$。
 
-@eq:expand-sum 中，两函数之和的瞬时自相关、自WVD，除了包含两函数各自的瞬时自相关、自WVD，还与两函数的瞬时互相关、互WVD有关。前者各自称作自项，后者统一称作*交叉项*。如果不将 $x,y$ 看作信号，而只将它们看作双分量信号 $z = x+y$ 的两个*分量*，则@eq:expand-sum 说明多分量信号的瞬时自相关、自WVD并非各分量瞬时自相关、自WVD的简单叠加，而还包含分量之间的交叉项。
+@eq:expand-sum 中，两函数之和的瞬时自相关、自WVD，除了包含两函数各自的瞬时自相关、自WVD，还与两函数的瞬时互相关、互WVD有关。前者各自称作自项，后者统一称作*交叉项*。如果不将 $x,y$ 看作信号，而只将它们看作双分量信号 $z = x+y$ 的两个*分量*，则@eq:expand-sum 说明多分量信号的瞬时自相关、自WVD并非各分量瞬时自相关、自WVD的简单叠加，而还包含分量之间的交叉项。@fig:intro 展示了一个双分量信号的WVD，该信号包含两个时频位置不同的波包。可见WVD的能量分布于三块，除了与两波包时频位置对应的两块自项，还有一块位于其间的交叉项。
+
+#figure(
+  image("fig/10次MC仿真.png"),
+  caption: [双分量信号的WVD的能量分布于两块自项和一块交叉项]
+) <fig:intro>
 
 == 关于交叉项的讨论
 
 一般认为，WVD存在交叉项这一特点，是它在多分量信号应用中需要克服的不足，需要进行抑制。
 
-Fourier变换、Wigner–Ville分布的“刚性”比较强，它们不像短时Fourier变换、小波变换、Cohen类那样有人为因素（如窗的形式、尺寸、作用域）可调。它们给出的结果基本可认为是信号所固有的。如果它们给出的结论不符合人的直观，恐怕意味着人的直观需要修正，而未必是它们错了。
+然而WVD的“刚性”比较强，它不像短时Fourier变换（short-time Fourier transform, STFT）、小波变换、Cohen类那样有窗的形式、尺寸、作用域等人为因素可调。WVD给出的结果基本可认为是信号所固有的。如果这种工具分析出的结果不符合人的直观，有可能意味着人的直观需要修正，而未必是分析结果错了。
 
-- Fourier变换分析正弦信号
+并非只有WVD“刚性”强，Fourier变换也是如此，并且Fourier变换也曾给出“反直觉”的结论。例如用Fourier变换分析正弦信号，以往直观认为信号中只有单一频率，而Fourier变换却给出正负两个频率，工具分析结果不符合直观。这时有两条处理思路。一条是修改工具，替换Fourier变换，去掉负频率，让变换只给出符合以往直观的正频率。沿着这条思路发展出了解析信号和Hilbert变换等。另一条是修正直观，接受负频率的存在，就用正负两个频率分析。沿着这条思路发展出了正交调制、频谱循环混叠分析方法等。可见，修正直观与修改工具一样都是可行思路。
 
-  以往直观认为单频，Fourier变换却说有正负两频率。
+用WVD分析双分量信号，以往直观认为只有两块与两分量对应的能量，而WVD却给出两自项、一交叉项共三块能量。考虑修改工具，已经提出了Choi-Williams分布（Choi–Williams distribution, CWD）等加窗WVD。考虑修正直观，则现有研究不充分。
 
-  - 把复频率弄掉 ⇒ 解析信号、Hilbert变换。
-  - 就用正负频率分析 ⇒ 正交调制、频谱循环混叠……
+本文将沿修正直观这一思路分析。@sec:disappear\构造一特例让WVD中的交叉项消失；@sec:meaning\探究WVD中交叉项的物理意义，@sec:geometry\分析其几何特征，@sec:reify\研究它显现到时域的条件；@sec:quantum\补充讨论信号分析与量子物理的联系。
 
-- Wigner–Ville分布分析双分量信号
-
-  以往直观认为有两块能量，WVD却说有三块。
-
-  - 把交叉项弄掉 ⇒ Choi-Williams分布等加窗WVD。
-  - 就用交叉项分析 ⇒ ？
-
-= WVD可以没有交叉项吗？
+= WVD可以没有交叉项<sec:disappear>
 
 // TODO（徐）：“2.1.2.2”是哪里？薛：“感觉应该对应于第三节互WVD平移性质的推导。”
 不同于STFT对信号的线性表示，WVD是一种非线性变换，是双线性形式的时频分布@张贤达2015a。假如某一个信号含有多个不同的分量，利用WVD对信号做时频分析的时候，这就不可避免地要讨论交叉项这个问题。对于含有多个不同分量的的确知信号，利用WVD分析该信号的时频特性。这时，时频平面上一定会出现交叉项，这在2.1.2.2将会有详细的讨论。而对于含有多个不同分量的随机信号，我们更关心集体的平均效果，信号的演变谱就等于该信号WVD的数学期望。由于随机信号的演变谱在WVD的基础上又求了数学期望，因此随机信号的演变谱中交叉项有可能为零，交叉线不会出现再时频平面中，也就是没有交叉项。
@@ -99,13 +96,14 @@ Fourier变换、Wigner–Ville分布的“刚性”比较强，它们不像短�
 构造含有两个分量的随机信号形式如下：
 $
   X(t) = x_1 (t) + C x_2(t),
+  quad t in RR,
 $
 其中，$x_1 (t)$ 和 $x_2 (t)$ 是确定信号，$C = e^(j phi)$，$phi ~ U(0, 2 pi)$。
 
 == 数学证明
 
 所构造的随机信号 $X(t)$ 的演变谱为：
-
+// TODO: 用@sec:intro\简化
 $
   & expect WVD_X (t,f) \
   & = expect integral_RR X(t+tau/2) X^*(t-tau/2)e^(-j 2pi f tau) dif tau \
@@ -156,77 +154,75 @@ $ <eq:expect-cross>
   label: <fig:WignerNoCrossterms>,
 )
 
-= 交叉项的物理意义及几何特征
+= 交叉项的物理意义 <sec:meaning>
 
-== 交叉项的时域定性理解
+@sec:disappear\说明WVD中的交叉项并不总存在，交叉项存在与否本身就蕴含了信息。本节研究交叉项信息的物理意义，特别关注自项没有而交叉项独有的信息。
+
+== 时域定性理解交叉项的物理意义
+
+以双分量信号 $z = x+y$ 为例讨论。由@eq:expand-sum，$WVD_z$ 中的自项、交叉项与 $R_z$ 的两自项、一交叉项一一对应，构成三个Fourier变换对。既然WVD中交叉项与瞬时自相关中交叉项在数学上可相互推出，那么其物理意义自然也一致。按@eq:expand-sum，$R_z$ 中的交叉项等于 $2 caron(Re) R_(x,y)$，而
+$
+  R_(x,y) (t,tau) := x(t+tau/2) y^*(t-tau/2),
+$
+其辐角是 $arg x(t+tau/2) - arg y(t-tau/2)$，即分量间的相位差。——交叉项反映分量间的相位差。
 
 == 互WVD的平移性质 <sec:shift>
 
-假设确定信号 $x(t)$ 包含两个分量 $x_1(t)$ 和 $x_2(t)$，即 $x(t)=x_1(t)+x_2(t)$，信号 $x(t)$ 的WVD记为 。根据时频分布的二次叠加原理和互WVD的共轭性质可以得到 $WVD_(x)(t,f)$ 由三部分组成，分别是自项 $WVD_(x_1)(t,f)$、$WVD_(x_2)(t,f)$ 和交叉项 $2Re WVD_(x_1,x_2)(t,f)$，如@eq:wvd-components 所示。
-$
-  WVD_(x)(t,f) = WVD_(x_1)(t,f) + WVD_(x_2)(t,f) + 2Re WVD_(x_1,x_2)(t,f),
-$ <eq:wvd-components>
-其中，$WVD_(x_1,x_2)(t,f)$ 是分量 $x_1(t)$ 和 $x_2(t)$ 的互WVD。可以看到，信号的交叉项主要与分量的互WVD有关。
+交叉项的物理意义也可从频域定量理解。为此先需证明一引理：互WVD的平移性质。
 
-如果分量 $x_1(t)$ 经过时间为 $t_1$ 延时和频率为 $f_1$ 的调制变为 $x'_1(t)$；分量 $x_2(t)$ 经过时间为 $t_2$ 延时和频率为 $f_2$ 的调制变为 $x'_2(t)$，则新的信号 $x'(t)$ 为：
-$
-  x'(t) & = x'_1(t) + x'_2(t) \
-        & = x_1(t-t_1)e^(j 2 pi f_1) + x_1(t-t_2)e^(j 2 pi f_2).
-$
-新信号 $x'(t)$ 中两个分量的互WVD应该怎么改变，这将决定交叉项如何改变。
+// §4 如何发表……证明 https://user.guancha.cn/main/content?id=1353068
 
-在上述情况下，互WVD的平移性质为：
-$
-  WVD_(x'_1, x'_2)(t,f) = e^(-j 2pi f (t_1-t_2))e^(j 2pi t (f_1-f_2))WVD_(x_1, x_2)(t-(t_1+t_2)/2,f-(f_1+f_2)/2). 
-$
+按@sec:intro\分析，交叉项与互WVD紧密相关，双分量信号WVD中的交叉项等于分量间互WVD的实部的两倍，所以分析清楚互WVD有助于理解交叉项。然而双分量信号中的两个分量有很大任意性，而任意一对函数的互WVD的比较复杂。有了互WVD的平移性质，可以先把这一对函数归一化为标准的简单形式，分析这些简单形式间的互WVD，然后应用互WVD的平移性质把结论推广回任意一对函数。
 
-【证明】
+#corollary[互WVD的平移性质][
+  对于一对 $RR -> CC$ 函数 $x, y$，任取 $t_x, t_y, f_x, f_y in RR$，定义另外一对 $RR -> CC$ 函数 $x',y'$：
+  $
+    x' (t) &= x(t - t_x) ** e^(j 2pi f_x t), quad
+    y' (t) &= y(t - t_y) ** e^(j 2pi f_y t), quad
+    t in RR.
+  $
+  那么 $forall t,f in RR$，
+  $
+    WVD_(x',y') (t,f) = WVD_(x,y) (t - t_mu, f - f_mu)  ** e^(j 2pi (f_d t - f t_d)),
+  $
+  其中
+  $
+    t_mu = (t_x + t_y)/2, &quad t_d = t_x - t_y, \
+    f_mu = (f_x + f_y)/2, &quad f_d = f_x - f_y. \
+  $
+] <thm:shift>
 
-先证明互WVD的时移性质：
+@thm:shift 可直观理解如下。$x,y$ 各自延时、调频得 $x',y'$。于是在时频平面内，$x,y$ 各自的自WVD分别平移 $(t_x,f_x), (t_y,f_y)$，其间的互WVD也存在关联。具体来说，在时频平面内，将 $WVD_(x,y)$ 按平均平移量 $(t_mu, f_mu)$ 二维平移，并按平移量之差 $(f_d, -t_d)$ 二维调制，即为 $WVD_(x',y')$。
 
-$
-  & integral_RR x_1(t+tau/2-t_1) x_2^*(t-tau/2-t_2) e^(-j 2pi f tau) dif tau \
-  &= integral_RR x_1(t+tau/2-t_1) x_2^*(t-tau/2-t_2) e^(-j 2pi f (tau-t_1 + t_2)) dif tau ** e^(-j 2pi f (t_1 - t_2)) \
-  &= e^(-j 2pi f (t_1-t_2)) WVD_(x_1, x_2)(t-(t_1+t_2)/2,f).
-$
+#proof[(@thm:shift)][
+  互WVD与瞬时互相关是Fourier变换对，先分析瞬时互相关的变化，再导出WVD的变化。
 
-已知
-$ cases(x_1(tau)<->X_1(f), x_2(tau)<->X_2(f)), $
-则
-$
-  cases(
-  x_1(t-t_1+tau/2)<->2X_1(2f)e^(j 2pi (2f)(t-t_1)),
-  x_2^*(t-t_2-tau/2)<->2X_2^*(2f)e^(-j 2pi (2f)(t-t_2))
-).
-$
-于是
-$
-  & integral_RR x_1(t+tau/2-t_1) ** x_2^*(t-tau/2-t_2) e^(-j 2pi f tau) dif tau \
-  & = 4integral_RR X_1(2beta)e^(j 2pi (2beta)(t-t_1)) ** X_2^*(2f-2beta)e^(-j pi (2f-2beta)(t-t_2)) dif beta.
-$
-令 $2beta=f+nu/2$,则
-$
-  & integral_RR x_1(t+tau/2-t_1) ** x_2^*(t-tau/2-t_2) e^(-j 2pi f tau) dif tau \
-  & = 4integral_RR X_1(2beta)e^(j 2pi (2beta)(t-t_1)) ** X_2^*(2f-2beta)e^(-j pi (2f-2beta)(t-t_2)) dif beta \
-  & = integral_RR X_1(f+nu/2)e^(j 2pi (f+nu/2)(t-t_1)) ** X_2^*(f+nu/2)e^(-j pi (f-v/2)(t-t_2)) dif nu  \
-  & = e^(-j 2pi f (t_1-t_2))integral_RR X_1(f+nu/2)X_2^*(f+nu/2)e^(-j 2pi nu (t_1+t_2)/2)e^(j 2pi nu t) dif nu \
-  & = e^(-j 2pi f (t_1-t_2)) WVD_(x_1, x_2)(t-(t_1+t_2)/2,f).
-$
-同理，有互WVD的频移性质：
-$
-  e^(j 2pi t (f_1-f_2)) WVD_(x_1, x_2)(t,f-(f_1+f_2)/2)
-  = integral_RR X_1(f+nu/2-f_1)X_2^*(f-v/2-f_2) e^(j 2pi nu t) dif tau.
-$
+  用 $R_(x,y)$ 表示 $R_(x',y')$：
+  $
+    R_(x',y') (t, tau)
+    &:= x'(t+tau/2) y'^*(t-tau/2) \
+    &= x(t-t_x+tau/2) e^(j 2pi f_x (t+tau\/2)) ** y^*(t-t_y-tau/2) e^(-j 2pi f_y (t-tau\/2)) \
+    &= x(t-t_x+tau/2) y^*(t-t_y-tau/2) ** e^(j 2pi (f_x (t+tau\/2) - f_y (t-tau\/2))) \
+    &= R_(x,y) (t-t_mu, tau-t_d)  ** e^(j 2pi (f_d t + f_mu tau)).
+  $ <eq:shift-corr>
+  可见瞬时自相关的变化是将 $t$ 先延时 $t_mu$、再调频 $f_d$，将 $tau$ 先延时 $t_d$、再调制 $f_mu$。
 
-综合互WVD的时移和频移性质，互WVD的平移性质得证。
+  对@eq:shift-corr 两端的 $tau$ 应用Fourier变换，左端套用互WVD的定义，右端利用Fourier变换的延时和调频性质，得
+  $
+    WVD_(x',y') (t,f)
+    = WVD_(x,y) (t-t_mu, f - f_mu) ** e^(j 2pi (f_d t - f t_d)).
+  $
+]
 
-互WVD的平移性质可以理解为，信号的两个分量分别经过时延调制和频率调制后，信号的互WVD互按照时延平均和频率平均进行二维平移，同时会按照时延差分和频率差分进行二维调制。
+对于 $x,y$ 可由同一函数延时、调频得到这类特例，#parencite(<hlawatsch1997>) 已给出@thm:shift 的证明。@thm:shift 的意义在于排除了无关因素，抽离出了研究交叉项需要的互WVD的更弱而又更本质的性质。
 
-== 交叉项的频域定量理解
+== 频域定量理解交叉项的物理意义
 
-== 交叉项检测弱信号
+== 交叉项的可能应用
 
-== 交叉项的几何特征
+检测弱信号
+
+= 交叉项的几何特征 <sec:geometry>
 
 两分量的确定信号可以看作时频中心重叠的两个分量分别经过不同的时移和频移得到的。依旧按照@sec:shift 的思路，将 $x(t)$ 看作两个分量时频中心重叠的确定信号，根据互WVD的平移性质，此时信号的交叉项是缓变的。$x(t)$ 的两个分量分别经过时延平移和频率调制后得到 $x'(t)$，则信号 $x'(t)$ 的交叉项 $I_(x')(t,f)$ 为：
 
@@ -271,15 +267,15 @@ $
   label: <fig:cross-direction>,
 )
 
-= 交叉项显现到时域
+= 交叉项显现到时域 <sec:reify>
 
 == 拍频现象
 
 == 实验设计
 
-= 信号分析与量子物理的翻译词典
+= 信号分析与量子物理的翻译词典 <sec:quantum>
 
-// 此外，Wigner函数在1932年被提出，用于描述量子态在相空间中的分布，而后被Ville引入到信号分析。量子物理与信号分析之间也许存在着某种对应关系，我们给出了其间的翻译词典。
+// 此外，Wigner函数在1932年被提出，用于描述量子态在相空间中的分布，而后被Ville引入到信号分析。量子物理与信号分析之间也许存在着某种联系，我们给出了其间的翻译词典。
 
 = 任务分工
 

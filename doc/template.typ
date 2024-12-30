@@ -4,6 +4,7 @@
   strike: gray,
 )
 
+
 #import "@preview/subpar:0.2.0"
 #let subpar-grid = subpar.grid.with(
   show-sub: it => {
@@ -12,6 +13,11 @@
     it
   },
 )
+
+
+#import "@preview/ctheorems:1.1.3": thmrules, thmbox, thmproof
+#let corollary = thmbox("corollary", "引理", fill: rgb("#eeffee"), base_level: 1)
+#let proof = thmproof("proof", "证明", titlefmt: strong).with(fill: gray.lighten(95%))
 
 
 /// Project
@@ -122,6 +128,17 @@
           )
         },
       )
+    } else if el.func() == heading {
+      link(
+        el.location(),
+        {
+          set text(palette.ref)
+          numbering(
+            "第 " + el.numbering + " 节",
+            ..counter(heading).at(el.location()),
+          )
+        },
+      )
     } else {
       it
     }
@@ -130,6 +147,8 @@
   show strike: set text(palette.strike)
   show link: set text(palette.link)
   show ref: set text(palette.ref)
+
+  show: thmrules
 
   // Bibliography
 
@@ -163,3 +182,5 @@
 }
 
 #let thin-hline = table.hline.with(stroke: 0.5pt)
+
+#let parencite(key, ..args) = [文献 #cite(key, style: "ieee", ..args)]
