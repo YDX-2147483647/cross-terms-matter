@@ -2,7 +2,10 @@
 #show: shorthands.with(
   ($**$, $times$),
   ($===$, $equiv$),
+  ($~=$, $approx$),
 )
+
+#import "@preview/fletcher:0.5.3": diagram, edge
 
 #import "template.typ": project, table-header, thin-hline, subpar-grid, corollary, proof, parencite
 #show: project.with(
@@ -23,7 +26,7 @@ Wigner--Ville分布（Wigner--Ville distribution, WVD）是一种双线性形式
 
 = 介绍 <sec:intro>
 
-== WVD的双线性与交叉项
+== WVD的双线性与交叉项 <sec:bilinear>
 
 对于从实数集 $RR$ 映射到复数集 $CC$ 的两个函数 $x, y$，定义其*瞬时互相关*为
 $
@@ -174,16 +177,16 @@ $
 
 按@sec:intro\分析，交叉项与互WVD紧密相关，双分量信号WVD中的交叉项等于分量间互WVD的实部的两倍，所以分析清楚互WVD有助于理解交叉项。然而双分量信号中的两个分量有很大任意性，而任意一对函数的互WVD的比较复杂。有了互WVD的平移性质，可以先把这一对函数归一化为标准的简单形式，分析这些简单形式间的互WVD，然后应用互WVD的平移性质把结论推广回任意一对函数。
 
-#corollary[互WVD的平移性质][
+#corollary[互WVD平移性质][
   对于一对 $RR -> CC$ 函数 $x, y$，任取 $t_x, t_y, f_x, f_y in RR$，定义另外一对 $RR -> CC$ 函数 $x',y'$：
   $
-    x' (t) &= x(t - t_x) ** e^(j 2pi f_x t), quad
-    y' (t) &= y(t - t_y) ** e^(j 2pi f_y t), quad
+    x' (t) &:= x(t - t_x) ** e^(j 2pi f_x t), quad
+    y' (t) &:= y(t - t_y) ** e^(j 2pi f_y t), quad
     t in RR.
   $
   那么 $forall t,f in RR$，
   $
-    WVD_(x',y') (t,f) = WVD_(x,y) (t - t_mu, f - f_mu)  ** e^(j 2pi (f_d t - f t_d)),
+    WVD_(x',y') (t,f) = WVD_(x,y) (t - t_mu, f - f_mu)  ** e^(j 2pi (f_d t - f t_d + f_mu t_d)),
   $
   其中
   $
@@ -192,7 +195,24 @@ $
   $
 ] <thm:shift>
 
-@thm:shift 可直观理解如下。$x,y$ 各自延时、调频得 $x',y'$。于是在时频平面内，$x,y$ 各自的自WVD分别平移 $(t_x,f_x), (t_y,f_y)$，其间的互WVD也存在关联。具体来说，在时频平面内，将 $WVD_(x,y)$ 按平均平移量 $(t_mu, f_mu)$ 二维平移，并按平移量之差 $(f_d, -t_d)$ 二维调制，即为 $WVD_(x',y')$。
+#figure(
+  block(
+    diagram(spacing: (8em, 6em), $
+      x,y edge(label: "各自延时、调频", marks: ->, dash: "dashed")
+      edge("d", label: "互WVD", ->)
+      & x',y'
+      edge("d", label: "互WVD", ->)
+      \
+      WVD_(x,y)
+      edge(label: "平移性质", marks: ->, dash: "dashed")
+      & WVD_(x',y')
+    $),
+    inset: (bottom: 1em),
+  ),
+  caption: [互WVD平移性质所描述的关系]
+) <fig:shift>
+
+@thm:shift 可直观理解如@fig:shift。$x,y$ 各自延时、调频得 $x',y'$。于是在时频平面内，$x,y$ 各自的自WVD分别平移 $(t_x,f_x), (t_y,f_y)$，其间的互WVD也存在关联。具体来说，在时频平面内，将 $WVD_(x,y)$ 按平均平移量 $(t_mu, f_mu)$ 二维平移，并按平移量之差 $(f_d, -t_d)$ 二维调制，再适当调整初相，即为 $WVD_(x',y')$。
 
 #proof[(@thm:shift)][
   互WVD与瞬时互相关是Fourier变换对，先分析瞬时互相关的变化，再导出WVD的变化。
@@ -205,18 +225,95 @@ $
     &= x(t-t_x+tau/2) y^*(t-t_y-tau/2) ** e^(j 2pi (f_x (t+tau\/2) - f_y (t-tau\/2))) \
     &= R_(x,y) (t-t_mu, tau-t_d)  ** e^(j 2pi (f_d t + f_mu tau)).
   $ <eq:shift-corr>
-  可见瞬时自相关的变化是将 $t$ 先延时 $t_mu$、再调频 $f_d$，将 $tau$ 先延时 $t_d$、再调制 $f_mu$。
+  可见瞬时自相关的变化是将 $t$ 先延时 $t_mu$、再调频 $f_d$，将 $tau$ 先延时 $t_d$、再调频 $f_mu$。
 
   对@eq:shift-corr 两端的 $tau$ 应用Fourier变换，左端套用互WVD的定义，右端利用Fourier变换的延时和调频性质，得
   $
     WVD_(x',y') (t,f)
-    = WVD_(x,y) (t-t_mu, f - f_mu) ** e^(j 2pi (f_d t - f t_d)).
+    = WVD_(x,y) (t-t_mu, f - f_mu) ** e^(j 2pi (f_d t - (f-f_mu) t_d)).
   $
 ]
 
-对于 $x,y$ 可由同一函数延时、调频得到这类特例，#parencite(<hlawatsch1997>) 已给出@thm:shift 的证明。@thm:shift 的意义在于排除了无关因素，抽离出了研究交叉项需要的互WVD的更弱而又更本质的性质。
+@thm:shift 中时频并不对称，这是平移顺序导致的。@thm:shift 是先延时再调频；如果先调频再延时，也能得到如下类似结论。
+
+#corollary[互WVD平移性质的变体][
+  前提条件同@thm:shift，补充定义第三对 $RR -> CC$ 函数 $x'', y''$：
+  $
+    x'' (t) &= x(t - t_x) ** e^(j 2pi f_x (t - t_x)), quad
+    y'' (t) &= y(t - t_y) ** e^(j 2pi f_y (t - t_y)), quad
+    t in RR.
+  $
+  那么 $forall t,f in RR$，
+  $
+    WVD_(x'',y'') (t,f) = WVD_(x,y) (t - t_mu, f - f_mu)  ** e^(j 2pi (f_d t - f t_d - f_d t_mu)).
+  $
+] <thm:shift-variant>
+
+#proof[(@thm:shift-variant)][
+  比较 $x', y'$ 与 $x'', y''$，可知它们只差与 $t,tau$ 无关的常数
+  $
+    x'' === x' ** e^(-j 2pi f_x t_x), quad
+    y'' === y' ** e^(-j 2pi f_y t_y).
+  $
+  由@sec:bilinear\中介绍的WVD双线性性质，
+  $ WVD_(x'',y'') === WVD_(x',y') ** e^(j 2pi (f_y t_y - f_x t_x)), $
+  其中常数的指数中
+  $
+    f_y t_y - f_x t_x
+    = -f_d t_mu - f_mu t_d.
+  $
+  再代入@thm:shift 给出的 $WVD_(x',y')$ 即得证。
+]
+另外也可直接从定义证明。
+#proof[(@thm:shift-variant 另法)][ 
+  用与@eq:shift-corr 类似的方法，可推出
+  $
+    R_(x'', y'') (t,tau)
+    = R_(x,y) (t-t_mu, tau-t_d)  ** e^(j 2pi (f_d (t-t_mu) + f_mu (tau-t_d))).
+  $ <eq:shift-corr-variant>
+  可见瞬时自相关的变化是将 $t$ 先调频 $f_d$、再延时 $t_mu$，将 $tau$ 先调频 $f_mu$、再延时 $t_d$。
+
+  对@eq:shift-corr-variant 两端的 $tau$ 应用Fourier变换，左端套用互WVD的定义，右端利用Fourier变换的调频和延时性质，得
+  $
+    WVD_(x'',y'') (t,f)
+    = WVD_(x,y) (t-t_mu, f - f_mu) ** e^(j 2pi (f_d (t-t_mu) - f t_d)).
+  $
+]
+
+其实对于 $x,y$ 可由同一函数延时、调频得到这类特例，#parencite(<hlawatsch1997>) 已给出@thm:shift 的证明。@thm:shift 的意义在于排除了无关因素，抽离出了研究交叉项需要的互WVD的更弱而又更本质的性质。
 
 == 频域定量理解交叉项的物理意义
+
+现在利用@thm:shift，从频域定量理解交叉项的物理意义。
+
+#[
+  #let wvd = $WVD_(tilde(x), tilde(y))$
+  
+  考虑双分量信号 $z = x + y$。记两分量的时频中心分别为 $(t_x, f_x) in RR^2$ 与 $(t_y, f_y) in RR^2$，记两分量在各自时频中心的辐角分别为 $phi_x := arg x(t_x) in CC, thick phi_y := arg y(t_y) in CC$。
+
+  简化 $x,y$ 为 $tilde(x), tilde(y)$。构造
+  $
+    tilde(x) (t) &:= x(t + t_x) **e^(-j 2pi f_x t - j phi_x),
+    &quad t in RR, \
+    tilde(y) (t) &:= y(t + t_y) **e^(-j 2pi f_y t - j phi_y),
+    &quad t in RR. \
+  $ <eq:normalize>
+  这样 $tilde(x), tilde(y)$ 是零时刻、零频率附近的零初相（$arg tilde(x) (0) = arg tilde(y) (0) = 0$）函数。
+
+  分析 $wvd$。 $tilde(x), tilde(y)$ 零频率故缓变，$tilde(x), tilde(y)$ 时间中心重合故 $wvd$ 类似自WVD。因此，$wvd$ 通常是零时刻、零频率附近的缓变分布，并且在其附近 $arg wvd ~= 0$。如果 $x,y$ 是Gauss波包，这严格成立；如果 $x,y$ 可由同一函数延时、调频得到，则 $tilde(x) === tilde(y)$，这也严格成立。如果 $wvd$ 明显偏离上述分布，则可将原信号分解为更多分量，让每对分量间的 $wvd$ 符合上述分布。
+
+  从 $wvd$ 恢复 $WVD_(x,y)$。反解@eq:normalize 可得
+  $
+    x(t) ** e^(-j phi_x) &= tilde(x)(t - t_x) **e^(j 2pi f_x (t-t_x)),
+    &quad t in RR, \
+    y(t) ** e^(-j phi_y) &= tilde(y)(t - t_y) **e^(j 2pi f_y (t-t_y)),
+    &quad t in RR. \
+  $
+  由@thm:shift-variant，上式左端两函数的互WVD为
+  $
+    (t,f) |-> wvd(t-t_mu, f-f_mu) ** e^(j 2pi (f_d t - f t_d - f_d t_mu)).
+  $
+]
 
 == 交叉项的可能应用
 
@@ -654,6 +751,12 @@ $
 - §2第19页式 (2-56) 之前未编号的公式
 
   $R_(x_1 x_2)^* (t,tau)$ 中的 $tau$ 应该是 $-tau$，$Re$ 应该是 $caron(Re)$。论证详见本文@eq:expand-sum。
+
+- §3第8页 $W_(x_1 x_2) (t,f) = dots.c$ 等公式中的相位
+
+  $(f-f_mu) t + f_d (t-t_mu) + f_d t_mu$ 与同页下方的定义 $t_d = t_1 - t_2, f_d = t_1 - t_2$ 矛盾。如果保持 $t_d, f_d$ 定义不变，则该公式是本文@thm:shift 的特例，应该是 $(f-f_mu) t - f_d t$，这样才能给出正确的振荡方向。
+
+  同页和第9页的图3-2还讨论了AF的位置，可能也有问题。
 
 - §3第20页图3-6
 
