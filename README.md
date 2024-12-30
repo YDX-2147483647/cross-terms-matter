@@ -14,6 +14,10 @@
 
   其中[`asset/log.svg`](./doc/asset/logo.svg)提取自[北京理工大学视觉形象识别系统·基本要素组合规范](https://www.bit.edu.cn/gbxxgk/dqgz_sjb/vixx/jbyszhgf/)-[06](https://ssc.info.bit.edu.cn/fileDeposit/download/077c0f51b19e6b8d6f72da06dd93676c.ai)。
 
+  ```shell
+  $ git commit --message "chore(doc): 保存 $(date -I m) 版本"
+  ```
+
   <details>
   <summary>大纲</summary>
 

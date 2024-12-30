@@ -355,9 +355,49 @@ $
 $
 这与仿真结果一致。
 
-== 交叉项的可能应用
+== 交叉项可用于检测弱信号
 
-检测弱信号
+如@fig:strength，信号两分量一强一弱时，弱分量的自项的幅度与弱分量幅度的平方成正比，而强弱交叉项的幅度与弱分量幅度的一次方成正比。交叉项强于自项，可用于检测弱信号。
+
+#figure(
+  image("fig/检测弱信号.png"),
+  caption: [包含强弱分量的信号的WVD]
+) <fig:strength>
+
+以Gauss波包为例具体分析自项和交叉项的强度。取
+$
+  x(t) &= exp(2pi (- (t-t_x)^2/(2 sigma_x^2) + j f_x (t-t_x))),
+  &quad t in RR, \
+  y(t) &= exp(2pi (- (t-t_y)^2/(2 sigma_y^2) + j f_y (t-t_y))),
+  &quad t in RR. \
+$
+（$sigma_x = sigma_y$ 时，可用@thm:shift-variant 快速计算。）
+经过计算，自WVD
+$
+  WVD_x (t,f)
+  &= sqrt(2) ** sigma_u ** exp(-2pi ( 1/sigma^2 (t-t_u)^2/2 + sigma^2 (f-f_u)^2/2)), \
+  &quad t,f in RR, u in {x,y},
+$
+而互WVD
+$
+  WVD_(x,y) (t,f)
+  &= sqrt(2) ** sqrt(2 / (1 \/ sigma_x^2 + 1\/sigma_y^2)) \
+  &quad ** exp(-2pi S)
+  &quad t,f in RR,
+$
+其中
+$
+  -2 (sigma_x^2 + sigma_y^2) Re S &= (2t - t_x - t_y)^2 + (2f-f_x-f_y)^2 sigma_x^2 sigma_y^2 >= 0, \
+  (sigma_x^2 + sigma_y^2) Im S
+  &= 2 f t (sigma_y^2 - sigma_x^2) + 2f (sigma_x^2 t_y - sigma_y^2 t_x) + (2t - t_x - t_y) (f_x sigma_x^2 - f_y sigma_y^2).
+$
+简而言之，$forall a, b in RR^+$,
+$
+  max WVD_(a x) = sqrt(2) a sigma_x, 
+  quad max WVD_(b y) = sqrt(2) b sigma_y, \
+  max WVD_(a x, b y) = sqrt(2) a b sqrt(2 / (1 \/ sigma_x^2 + 1\/sigma_y^2)).
+$
+$a=b$ 时，互WVD幅度是自WVD幅度的调和平方平均值。
 
 = 交叉项的几何特征 <sec:geometry>
 
