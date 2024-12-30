@@ -35,7 +35,7 @@ $
 $
 其中 $t$ 为 $x,y$ 自变量的平均值，$tau$ 为 $x,y$ 自变量之差，加“$#h(0em)^*$”表示共轭。如果将 $x,y$ 看作时域信号，其自变量代表时刻，则 $t$ 代表平均时刻，而 $tau$ 代表时间差。由映射 $(x,y) |-> R_(x,y)$ 定义的形式可知它满足以下性质。
 - 共轭反转对称：$forall t,tau in RR, thick R_(y, x) (t,tau) = R_(x,y)^* (t,-tau)$；
-- 齐次：$forall lambda in RR, thick R_(lambda x,y) === lambda R_(x,y)$；
+- 齐次：$forall lambda in CC, thick R_(lambda x,y) === lambda R_(x,y)$；
 - 可加：$R_(x+y, z) === R_(x, z) + R_(y,z)$。
 因此，$(x,y) |-> R_(x,y)$ 是共轭反转对称的双线性映射。
 
@@ -47,7 +47,7 @@ $
 这称作 $x,y$ 的互Wigner--Ville分布（Wigner--Ville distribution, WVD），简称*互WVD*。
 如果将 $x,y$ 看作时域信号，则 $WVD_(x,y) (t,f)$ 大致反映能量在 $t$ 时刻 $f$ 频率附近的分布密度。WVD同时描述时刻、频率，是一种时频分析工具。由Fourier变换的线性性质和反转性质，映射 $(x,y) |-> WVD_(x,y)$ 满足以下以下性质。
 - 共轭对称：$WVD_(x,y) === WVD_(y,x)^*$；
-- 齐次：$forall lambda in RR, thick WVD_(lambda x,y) === lambda WVD_(x,y)$；
+- 齐次：$forall lambda in CC, thick WVD_(lambda x,y) === lambda WVD_(x,y)$；
 - 可加：$WVD_(x+y,z) === WVD_(x,z) + WVD_(y,z)$。
 因此，$(x,y) |-> WVD_(x,y)$ 是共轭对称的双线性映射。
 
@@ -61,7 +61,7 @@ $
 $
 将 $x === y$ 代入瞬时互相关、互WVD的性质，可知瞬时自相关、自WVD满足以下性质。
 - 自相关共轭对称，自WVD实：$forall t,tau in RR,thick R_x (t,tau) = R_x^* (t,-tau)$ 与 $WVD_x === WVD_x^* in RR$；
-- 二次：$forall lambda in RR, quad thick R_(lambda x) = abs(lambda)^2 R_x,space WVD_(lambda x) = abs(lambda)^2 WVD_x$；
+- 二次：$forall lambda in CC, quad thick R_(lambda x) = abs(lambda)^2 R_x,space WVD_(lambda x) = abs(lambda)^2 WVD_x$；
 - 叠加：$R_(x + y) = R_x + R_y + R_(x,y) + R_(y,x), space WVD_(x+y) = WVD_x + WVD_y + WVD_(x,y) + WVD_(y,x)$。
 将以上第一个性质代入第三个性质，可得
 $
@@ -166,12 +166,19 @@ $ <eq:expect-cross>
 以双分量信号 $z = x+y$ 为例讨论。由@eq:expand-sum，$WVD_z$ 中的自项、交叉项与 $R_z$ 的两自项、一交叉项一一对应，构成三个Fourier变换对。既然WVD中交叉项与瞬时自相关中交叉项在数学上可相互推出，那么其物理意义自然也一致。按@eq:expand-sum，$R_z$ 中的交叉项等于 $2 caron(Re) R_(x,y)$，而
 $
   R_(x,y) (t,tau) := x(t+tau/2) y^*(t-tau/2),
-$
+$ <eq:cross-corr>
 其辐角是 $arg x(t+tau/2) - arg y(t-tau/2)$，即分量间的相位差。——交叉项反映分量间的相位差。
+
+特别注意，分量间相位差是交叉项独有的，在自项完全没有反映。首先，分量的自项并不反映其绝对相位，无法推出分量间相位差。@sec:bilinear\中介绍了自WVD的二次性质：$forall lambda in CC, thick WVD_(lambda x) = abs(lambda)^2 WVD_x$。若保持 $abs(lambda)$ 不变，改变 $arg lambda$，则 $lambda x$ 这一分量的绝对相位改变了，但其自WVD始终保持 $abs(lambda)^2 WVD_x$ 不变。这说明WVD中的自项不反映相应分量的绝对相位。其次，每个自项只与单个分量有关，不直接包含分量间的任何信息。
+
+另外，如果采集信号时的初始时刻不确定，那么信号每个分量的绝对相位都不可知。而交叉项反映了分量间的相对相位，已经是这种条件下所能确定的全部信息。
+
+以上根据@eq:cross-corr 定性分析，其实只是“交叉项反映分量间相位差”的必要不充分条件。因为交叉项并不是@eq:cross-corr，而是其共轭对称成分的Fourier变换。提取共轭对称成分时，还可能丢失这一信息。要想明确“交叉项反映分量间相位差”，还应定量理解。
+
 
 == 互WVD的平移性质 <sec:shift>
 
-交叉项的物理意义也可从频域定量理解。为此先需证明一引理：互WVD的平移性质。
+交叉项的物理意义可从频域定量理解。为此先需证明一引理：互WVD的平移性质。
 
 // §4 如何发表……证明 https://user.guancha.cn/main/content?id=1353068
 
@@ -284,14 +291,14 @@ $
 
 == 频域定量理解交叉项的物理意义
 
-现在利用@thm:shift，从频域定量理解交叉项的物理意义。
+现在利用互WVD的平移性质，从频域定量理解交叉项的物理意义。
 
 #[
   #let wvd = $WVD_(tilde(x), tilde(y))$
   
   考虑双分量信号 $z = x + y$。记两分量的时频中心分别为 $(t_x, f_x) in RR^2$ 与 $(t_y, f_y) in RR^2$，记两分量在各自时频中心的辐角分别为 $phi_x := arg x(t_x) in CC, thick phi_y := arg y(t_y) in CC$。
 
-  简化 $x,y$ 为 $tilde(x), tilde(y)$。构造
+  首先，简化 $x,y$ 为 $tilde(x), tilde(y)$。构造
   $
     tilde(x) (t) &:= x(t + t_x) **e^(-j 2pi f_x t - j phi_x),
     &quad t in RR, \
@@ -300,20 +307,53 @@ $
   $ <eq:normalize>
   这样 $tilde(x), tilde(y)$ 是零时刻、零频率附近的零初相（$arg tilde(x) (0) = arg tilde(y) (0) = 0$）函数。
 
-  分析 $wvd$。 $tilde(x), tilde(y)$ 零频率故缓变，$tilde(x), tilde(y)$ 时间中心重合故 $wvd$ 类似自WVD。因此，$wvd$ 通常是零时刻、零频率附近的缓变分布，并且在其附近 $arg wvd ~= 0$。如果 $x,y$ 是Gauss波包，这严格成立；如果 $x,y$ 可由同一函数延时、调频得到，则 $tilde(x) === tilde(y)$，这也严格成立。如果 $wvd$ 明显偏离上述分布，则可将原信号分解为更多分量，让每对分量间的 $wvd$ 符合上述分布。
+  接着，分析 $wvd$。 $tilde(x), tilde(y)$ 零频率故缓变，$tilde(x), tilde(y)$ 时间中心重合故 $wvd$ 类似自WVD。因此，$wvd$ 通常是零时刻、零频率附近的缓变分布，并且在其附近 $arg wvd ~= 0$。如果 $x,y$ 是Gauss波包，这严格成立；如果 $x,y$ 可由同一函数延时、调频得到，则 $tilde(x) === tilde(y)$，这也严格成立。如果 $wvd$ 明显偏离上述分布，则可将原信号分解为更多分量，让每对分量间的 $wvd$ 符合上述分布。
 
-  从 $wvd$ 恢复 $WVD_(x,y)$。反解@eq:normalize 可得
+  然后，从 $wvd$ 恢复 $WVD_(x,y)$。反解@eq:normalize 可得
   $
     x(t) ** e^(-j phi_x) &= tilde(x)(t - t_x) **e^(j 2pi f_x (t-t_x)),
     &quad t in RR, \
     y(t) ** e^(-j phi_y) &= tilde(y)(t - t_y) **e^(j 2pi f_y (t-t_y)),
     &quad t in RR. \
   $
-  由@thm:shift-variant，上式左端两函数的互WVD为
+  应用@thm:shift-variant，得上式左端两函数的互WVD为
   $
     (t,f) |-> wvd(t-t_mu, f-f_mu) ** e^(j 2pi (f_d t - f t_d - f_d t_mu)).
   $
+  再由WVD双线性，得
+  $
+    WVD_(x,y) (t,f)
+    = wvd(t-t_mu, f-f_mu) ** e^(j 2pi (f_d t - f t_d - f_d t_mu)) ** e^(j (phi_x - phi_y)).
+  $
+  至此已分析清楚互WVD：在时频平面中，将缓变且几乎实的 $wvd$ 二维平移至 $(t_mu, f_mu)$，按 $(f_d, -t_d)$ 二维调制，再适当调整初相，即为 $WVD_(x,y)$。
+
+  最后，从互WVD导出交叉项。由@eq:expand-sum，交叉项等于
+  $
+    2 Re WVD_(x,y) (t,f)
+    &~= 2 abs(wvd(t-t_mu, f-f_mu)) \
+    &quad ** cos(2pi (f_d t - f t_d - f_d t_mu) + phi_x - phi_y).
+  $ <eq:cross>
+  @eq:cross 中“$~=$”的唯一不严格处在于 $arg wvd ~= 0$。若满足前述任一严格成立条件，则 @eq:cross 也严格成立。
+
+  观察@eq:cross，可见交叉项的表达式确实包含分量间相位差 $phi_x - phi_y$，交叉项振荡的基准点就是分量间相位差。
 ]
+
+== 仿真验证
+
+生成一双分量信号，其两个分量均为Gauss波包，其时频中心关于原点对称，而且宽度相同。改变两分量间的相位差，考查其WVD，得@fig:relative-phase。图中横纵坐标分别代表时频，颜色代表WVD。时频坐标经过归一化，故未在同中标出。由图可知，增加分量间相位差，自项（左下、右上两块恒正能量）完全不变，交叉项（中央一块正负交替能量）各处的振幅不变，但整体振荡基准向左上移动。相位差为 $0$ 时，交叉项正中心是极大值点（最绿）；相位差从 $0$ 增加到 $pi/2$，该极大值点从正中心向左上移动，正中心处的WVD逐渐减小，正中心成为为零点（无色）；相位差继续增加到 $pi$ 时，正中心变为极小值点（最红）；相位差变化 $2pi$，WVD恢复原貌。可见交叉项正中心处WVD的变换规律与相位差的余弦一致。
+
+#figure(
+  image("fig/relative-phase-frames.png", width: 100%),
+  caption: [改变分量间相位差，考查WVD]
+) <fig:relative-phase>
+
+该信号的分量都是Gauss波包，@eq:cross 严格成立。又因两分量的时频中心关于原点对称，$t_d,f_d$ 均为零。因此，正中心处WVD的值
+$
+  WVD_(x,y) (t_mu, f_mu)
+  &= 2 abs(dots.c) ** cos(2pi (f_d t_mu - f_mu t_d - f_d t_mu) + phi_x - phi_y) \
+  &= 2 abs(dots.c) ** cos(0 + phi_x - phi_y). \
+$
+这与仿真结果一致。
 
 == 交叉项的可能应用
 
@@ -475,7 +515,7 @@ $
 
 === 在什么条件下会显现到时域（或频域）？
 
-同一时刻有多个频率分量，交叉项就会体现为拍频。拍频的频率正是公式 (3.3)@hlawatsch1997[page. 7] 中 $(t,f)$ 平面内交叉项
+同一时刻有多个频率分量，交叉项就会显现为拍频。拍频的频率正是公式 (3.3)@hlawatsch1997[page. 7] 中 $(t,f)$ 平面内交叉项
 的角波矢的模。
 
 == 任给一个函数，它都可能是某个信号的WVD吗？
