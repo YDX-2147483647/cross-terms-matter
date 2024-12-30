@@ -20,7 +20,12 @@
 
   set document(author: authors.map(a => a.name), title: title)
 
-  set text(font: ("Noto Serif CJK SC", "Source Han Serif"), lang: "zh", region: "CN")
+  let han-font = ("Noto Serif CJK SC", "Source Han Serif")
+  set text(font: han-font, lang: "zh", region: "CN")
+  show math.equation: it => {
+    show regex(`\p{scx:Han}`.text): set text(font: han-font)
+    it
+  }
   // Bulletin points should still in the default font
   set list(marker: ([•], [‣], [–]).map(text.with(font: "Libertinus Serif")))
 
@@ -129,7 +134,7 @@
   // Bibliography
 
   // Source Han Serif 的数字高度和括号不匹配
-  show cite: set text(font: "Liberation Serif")
+  show cite: set text(font: "Libertinus Serif")
 
   // https://forum.typst.app/t/how-to-cite-with-a-page-number-in-gb-t-7714-2015-style/1501/4
   show cite.where(style: auto): it => {
