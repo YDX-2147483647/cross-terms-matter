@@ -113,6 +113,7 @@
   set table(stroke: none)
 
   set math.equation(numbering: "(1)")
+  show: thmrules
   show ref: it => {
     let el = it.element
     if el == none {
@@ -139,6 +140,9 @@
           )
         },
       )
+    } else if el.func() == figure and el.kind == "thmenv" {
+      show link: set text(palette.ref)
+      it
     } else {
       it
     }
@@ -147,8 +151,6 @@
   show strike: set text(palette.strike)
   show link: set text(palette.link)
   show ref: set text(palette.ref)
-
-  show: thmrules
 
   // Bibliography
 
