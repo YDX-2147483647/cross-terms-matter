@@ -282,7 +282,7 @@ $ <eq:cross-corr>
 
 其实对于 $x,y$ 可由同一函数延时、调频得到这类特例，#parencite(<hlawatsch1997>) 已给出@thm:shift 的证明。@thm:shift 的意义在于排除了无关因素，抽离出了研究交叉项需要的互WVD的更弱而又更本质的性质。
 
-== 频域定量理解交叉项的物理意义
+== 频域定量理解交叉项的物理意义 <sec:shift-quantitative>
 
 现在利用互WVD的平移性质，从频域定量理解交叉项的物理意义。
 
@@ -342,7 +342,7 @@ $ <eq:cross-corr>
 #[
   #let wvd = $WVD_(tilde(x), tilde(y))$
   
-  考虑双分量信号 $z = x + y$。记两分量的时频中心分别为 $(t_x, f_x) in RR^2$ 与 $(t_y, f_y) in RR^2$，记两分量在各自时频中心的辐角分别为 $phi_x := arg x(t_x) in CC, thick phi_y := arg y(t_y) in CC$，并沿用@thm:shift 中对 $t_mu, f_mu, t_d, f_d$ 的定义，总结如@fig:variables。
+  考虑双分量信号 $z = x + y$。记两分量的时频中心分别为 $(t_x, f_x) in RR^2$ 与 $(t_y, f_y) in RR^2$，记两分量在各自时频中心的辐角分别为 $phi_x := arg x(t_x) in CC, thick phi_y := arg y(t_y) in CC$，并沿用@thm:shift 中对 $t_mu, f_mu, t_d, f_d$ 的定义，总结如@fig:variables#footnote[该图采用解析方法绘出，时频变量经过归一化，故未标出单位。后同。]。
 
   首先，简化 $x,y$ 为 $tilde(x), tilde(y)$。构造
   $
@@ -386,12 +386,6 @@ $ <eq:cross-corr>
 
 == 仿真验证
 
-#figure(
-  placement: auto,
-  image("fig/relative-phase-frames.png", width: 100%),
-  caption: [改变分量间相位差，考查WVD]
-) <fig:relative-phase>
-
 生成一双分量信号，其两个分量均为Gauss波包，其时频中心关于原点对称，而且宽度相同。改变两分量间的相位差，考查其WVD，得@fig:relative-phase。图中横纵坐标分别代表时频，颜色代表WVD。时频坐标经过归一化，故未在同中标出。由图可知，增加分量间相位差，自项（左下、右上两块恒正能量）完全不变，交叉项（中央一块正负交替能量）各处的振幅不变，但整体振荡基准向左上移动。相位差为 $0$ 时，交叉项正中心是极大值点（最绿）；相位差从 $0$ 增加到 $pi/2$，该极大值点从正中心向左上移动，正中心处的WVD逐渐减小，正中心成为为零点（无色）；相位差继续增加到 $pi$ 时，正中心变为极小值点（最红）；相位差变化 $2pi$，WVD恢复原貌。可见交叉项正中心处WVD的变换规律与相位差的余弦一致。
 
 该信号的分量都是Gauss波包，@eq:cross 严格成立。又因两分量的时频中心关于原点对称，$t_d,f_d$ 均为零。因此，正中心处WVD的值
@@ -402,7 +396,13 @@ $
 $
 这与仿真结果一致。
 
-== 交叉项的其它应用价值
+#figure(
+  placement: auto,
+  image("fig/relative-phase-frames.png", width: 100%),
+  caption: [改变分量间相位差，考查WVD]
+) <fig:relative-phase>
+
+== 交叉项的其它应用价值 <sec:dectect-the-weak>
 
 弱分量和强分量的交叉项可用于检测弱分量。因为弱分量的自项的能量与其幅度的平方成正比，而它与其它分量的互项的能量与其幅度的一次方成正比。如@fig:strength，信号两分量一强一弱，交叉项强于弱分量的自项，可用于检测弱分量。
 
@@ -454,99 +454,154 @@ $a=b$ 时，互WVD幅度是自WVD幅度的调和平方平均值。
 继续@sec:meaning\的思路，考虑双分量信号 $z = x + y$，沿用@fig:variables 中的记号 $(t_x,f_x), (t_y, f_y), (t_mu, f_mu)$ 以及 $t_d,f_d$，记交叉项为 $I$（代表干涉interference）。由@eq:cross，
 $
   I(t,f)
-  &~= 2 abs(WVD_(tilde(x), tilde(y)) (t-t_mu, f-f_mu)) \
-  &quad ** cos(2pi (f_d t - f t_d - f_d t_mu) + phi_x - phi_y).
-$ 
+  &~= 2 abs(WVD_(tilde(x), tilde(y)) (t-t_mu, f-f_mu))
+   ** cos(2pi (f_d t - f t_d) + phi),
+$ <eq:interference>
+其中
+$phi := phi_x - phi_y - 2pi f_d t_mu$
+是在时频平面内固定的常数。下面根据@eq:interference 分析交叉项的几何特征。
 
-看作两个分量时频中心重叠的确定信号，根据互WVD的平移性质，此时信号的交叉项是缓变的。$x(t)$ 的两个分量分别经过时延平移和频率调制后得到 $x'(t)$，则信号 $x'(t)$ 的交叉项 $I_(x')(t,f)$ 为：
+== 交叉项振荡位置
 
-$
-  I_(x')(t,f) & = 2Re WVD_(x_1,x_2)(t,f) \
-              & = 2abs(WVD_(x_1, x_2)(t-t_(12),f-f_(12)))cos(2pi(v_(12)t-f tau_(12))+phi)
-$
+交叉项 $I$ 的振幅等于 $2 abs(WVD_(tilde(x), tilde(y)) (t-t_mu, f-f_mu))$，所以 $I$ 主要位于 $abs(WVD_(tilde(x), tilde(y)) (t-t_mu, f-f_mu))$ 较大之处。由@sec:shift-quantitative，$abs(WVD_(tilde(x), tilde(y)) (t, f))$ 分布于零时刻零频率附近，故 $I$ 分布于 $(t_mu, f_mu)$ 附近，即两分量时频中心连线中点附近。
 
-其中，$t_(12)=(t_1+t_2)/2$，$f_(12)=(f_1+f_2)/2$，$tau_(12)=t_1-t_2$，$v_(12)=f_1-f_2$，$phi$ 是由 $WVD_(x_1,x_2)(t-t_(12),f-f_(12))$ 的相位。
-
-后面从交叉项的振荡位置、振荡疏密和振荡方向三个方面分析交叉项的几何特征。
-
-@fig:cross-position 分别展示了两个分量相同和两个分量不同时的交叉项，从图中可以看到交叉项的振荡位置始终位于两个信号中间。交叉项 $I_(x')(t,f)$ 的振荡位置主要由 $abs(WVD_(x_1, x_2)(t-t_(12),f-f_(12)))$决定，交叉项的中心位置应该在两个分量时频中心连线的中点上，交叉项始终位于两个信号的自项中间。
+@fig:cross-position 展示了两个分量相同或不同时的WVD，图中可以看到交叉项始终位于两个信号的对称中心。
 
 #subpar-grid(
   columns: (auto, auto),
   figure(image("fig/几何特征-基本-1倍距离-π_4角度.png", height: 15em), caption: [分量形式相同]),
-  figure(image("fig/几何特征-分量形式不同.png", height: 15em), caption: [分量形式不同]),
-  caption: [交叉项的振荡位置],
+  figure(image("fig/几何特征-分量形式不同.png", height: 15em), caption: [分量形式不同]), <fig:cross-position-distorted>,
+  caption: [改变分量项形式，观察交叉项振荡位置],
   label: <fig:cross-position>,
 )
 
-@fig:cross-distance 展示两个分量时频中心距离不同时的交叉项。从图中可以看到，随着两个信号时频中心距离的变大，信号的振荡变得更快，振荡变得更密集。交叉项 $I_(x')(t,f)$ 的振荡疏密主要由 $cos(2pi(v_(12)t-f tau_(12))+phi)$ 决定，随着分量时频中心间距的变大，$v_(12)$ 和 $tau_(12)$ 会变得更大，因此交叉项的振荡会更快，在时频图中更加密集。
+== 交叉项振荡方向 <sec:cross-direction>
+
+交叉项 $I$ 中振荡的部分是 $cos(2pi (f_d t - f t_d) + phi)$，其中 $f_d t - f t_d$ 在时频平面内变化，$phi$ 在时频平面内固定。因此，振荡的角波矢为 $(f_d, -t_d)$，垂直于两分量时频中心连线 $(t_d, f_d)$，等于连线顺时针旋转一个直角；而振荡的等相位面是“$f_d t - f t_d = "常数"$”，平行于两分量时频中心连线。
+
+@fig:cross-direction 展示了两个分量时频中心连线旋转不同角度下的WVD。从图中可以看到，交叉项振荡的等相位面始终平行于两分量时频中心连线。
 
 #subpar-grid(
   columns: 3,
-  figure(image("fig/几何特征-距离-0.8倍.png"), caption: [时频中心间距：$0.8$ 倍]),
-  figure(image("fig/几何特征-基本-1倍距离-π_4角度.png"), caption: [时频中心间距：$1$ 倍]),
-  figure(image("fig/几何特征-距离-1.7倍.png"), caption: [时频中心间距：$1.7$ 倍]),
-  caption: [两个分量时频中心距离不同时的交叉项],
-  label: <fig:cross-distance>,
-)
-
-@fig:cross-direction 展示了两个分量时频中心连线旋转不同角度下的交叉项。从图中可以看到，信号的振荡方向始终沿着两个分量的时频中心连线，也就是说交叉项振荡的等相位面平行于两个分量的时频中心连线。从理论上分析，交叉项 $I_(x')(t,f)$ 的振荡主要由 $cos(2pi(v_(12)t-f tau_(12))+phi)$ 决定，而 $cos(2pi(v_(12)t-f tau_(12))+phi)$ 的等相位面平行于两个分量的时频中心连线。
-
-#subpar-grid(
-  columns: 3,
-  figure(image("fig/几何特征-旋转-0.png"), caption: [角度：$0$]),
-  figure(image("fig/几何特征-基本-1倍距离-π_4角度.png"), caption: [(b) 角度：$pi/4$]),
-  figure(image("fig/几何特征-旋转-π_2.png"), caption: [角度：$pi/2$]),
-  caption: [两个分量时频中心连线不同角度时的交叉项],
+  figure(image("fig/几何特征-旋转-0.png"), caption: [连线为时间方向]),
+  figure(image("fig/几何特征-基本-1倍距离-π_4角度.png"), caption: [连线为倾斜方向]),
+  figure(image("fig/几何特征-旋转-π_2.png"), caption: [连线为频率方向]), <fig:cross-direction-t>,
+  caption: [改变两时频中心连线方向，观察交叉项振荡方向],
   label: <fig:cross-direction>,
 )
 
+== 交叉项振荡疏密
+
+交叉项 $I$ 振荡的疏密由角波矢的大小决定。由@sec:cross-direction\的分析，角波矢等于 $(f_d, -t_d)$，大小等于两分量时频中心的间距。因此分量时频中心距离越远，则角波矢越大，等相位面越密集；而距离越近，则角波矢越小，等相位面越疏松。形象地说，交叉项的疏密正如橡皮筋的松紧。
+
+@fig:cross-distance 展示了两个分量时频中心距离不同时的WVD。从图中可以看到，随着两个信号时频中心距离变大，交叉项振荡得更剧烈，等相位面更密集。
+
+#subpar-grid(
+  columns: 3,
+  figure(image("fig/几何特征-距离-0.8倍.png"), caption: [$0.8$ 倍距离]),
+  figure(image("fig/几何特征-基本-1倍距离-π_4角度.png"), caption: [$1$ 倍距离]),
+  figure(image("fig/几何特征-距离-1.7倍.png"), caption: [$1.7$ 倍距离]),
+  caption: [改变分量时频中心距离，观察交叉项振荡疏密],
+  label: <fig:cross-distance>,
+)
+
+此外，若将@fig:cross-position-distorted 中时间分布更宽的分量拆分成若干时间分布更短的分量，则所形成交叉项振荡的疏密也符合上述分析。
+
 = 交叉项显现到时域 <sec:reify>
 
-WVD在时间边缘积分 $integral WVD_x dif f === abs(x)^2$ 反映信号在时域的瞬时功率。WVD的交叉项存在振荡，一般认为积分时正负抵消，最终结果为零，并不显现到时域。这一命题成立是否总成立？交叉项在何种条件下能显现到时域？
-
-根据@sec:geometry\的分析，交叉项振荡的
-同一时刻有多个频率分量，交叉项就会显现为拍频。拍频的频率正是公式 (3.3)@hlawatsch1997[page. 7] 中 $(t,f)$ 平面内交叉项的角波矢的模。
+WVD在时间边缘积分 $integral WVD_x dif f === abs(x)^2$ 反映信号在时域的瞬时功率。交叉项存在振荡，一般认为积分时正负抵消，最终结果为零，并不显现到时域。这一命题成立是否总成立？交叉项在何种条件下能显现到时域？
 
 此外，WVD在频率边缘积分也反映信号在频域的功率谱。不过其原理与时域相同，将不重复讨论。
 
-== 实验设计
+== 交叉项在时域显现为拍频现象
 
-我们设计了一个实验采集同一时刻有多个频率分量的信号，实验设置如图 @fig:research-setup 所示。信号采集流程如下：
+=== 理论分析
 
-- 从侧面敲击桌面，桌子会发生震动。
-- 利用手机桌子振动时在 $y$ 轴方向的加速度。
-- 敲击桌面会激发桌子的多种振荡模式，加速度谱在频域会显现为多种频率分量。
+根据@sec:cross-direction\的分析，交叉项振荡的角波矢等于两分量时频中心连线旋转一个直角。若信号在同一时刻存在多个频率分量，则时频中心连线垂直于时间方向，角波矢平行于时间方向。此时交叉项只在时间方向振荡，而在频率方向不振荡。@fig:cross-direction-t 即为一例。若将这种WVD沿频率方向积分，则交叉项在积分曲线上并不振荡，不会正负抵消，最终得到的时间边缘积分会体现交叉项——在正交叉项的时刻，则总瞬时功率应大于自项给出的瞬时功率；在负交叉项的时刻，总瞬时功率应小于自项给出的瞬时功率。
+
+这一现象与*拍频*一致。拍频现象是指，如果在同一时间范围内，信号包含两相近频率的分量，那么信号的振幅及瞬时功率出现振荡，振荡频率是两分量的频率差。频率差即@sec:geometry\分析中的 $f_mu$，可见定量上WVD中的交叉项也与拍频一致。
+
+=== 实测实验
+
+理论分析未考虑不规则信号形式、多分量混合等复杂因素，分析结果未必可靠。为进一步验证，我们设计了实测实验，实验设置如@fig:research-setup。
 
 #figure(
   image("fig/实验设置.png"),
   caption: [实验装置：采集同一时刻有多个频率分量的信号]
 ) <fig:research-setup>
 
-#pagebreak(weak: true)
-== 拍频现象
+实验步骤如下。
++ 在新食堂二层东南选取一振荡明显的桌子作为实验对象，在桌上放置适当重物以稳定实验结果。
++ 将安装有 #link("https://phyphox.org")[phyphox] 的手机放到桌子上的固定位置，保证手机能与桌子一同振荡。
++ 启动手机加速度传感器的记录模式，记录加速度的浮动范围。
++ 从侧面敲击一下桌面，让桌子开始振动。
++ 观察传感器示数，待振荡逐渐衰减，加速度浮动范围恢复至敲击前的范围后，停止记录。
++ 保存加速度 $y$ 分量#footnote[选取该分量是因为其振幅最大。]的时间序列。
+由于桌子有竖直扭转、垂直于长边旋转、垂直于短边旋转等多种振荡模式，敲击后会同时出现多种频率分量，满足拍频出现的条件。
 
-处理采集到的加速度数据，加速度谱如图 @fig:g-periodogram 所示。@fig:g-periodogram (a) 中散点展示了采集到的加速度信号的功率谱密度，橙色曲线是散点求Welch平均后的结果。从图中可以看到，加速度信号包含多个频率分量，占据主要成分的主要是 8.5 Hz 和 9.9 Hz 两个频率成分。@fig:g-periodogram (b) 是(a)的放大图。
+处理采集到的数据，得加速度y分量的功率谱如@fig:g-periodogram。由图可知，信号中存在 $8.5 "Hz"$、$9.9 "Hz"$、$26 "Hz"$ 等多种频率分量，其中前两者频率接近，只相差 $1.4 "Hz"$。
 
 #subpar-grid(
   columns: 2,
-  figure(image("fig/g-periodogram.png"), caption: [加速度功率谱密度]),
-  figure(image("fig/g-periodogram-zoom.png"), caption: [加速度功率谱密度放大图]),
-  caption: [采集到的多频信号的加速度功率谱密度],
+  figure(image("fig/g-periodogram.png"), caption: [完整功率谱密度]),
+  figure(image("fig/g-periodogram-zoom.png"), caption: [功率谱密度局部放大]),
+  caption: [加速度的功率谱密度],
   label: <fig:g-periodogram>,
 )
 
-加速度信号的WVD如图 @fig:g-wvd (a) 所示，在图中可以观察到信号 8.5 Hz 和 9.9 Hz的两个频率分量，这是加速度信号的自项。交叉项在两个自项的中间。WVD显现到时域如图 @fig:g-wvd (b) 所示，WVD显现到时域则对应于时域信号的拍频。
+信号的WVD如@fig:g-wvd。在 $9 "Hz"$ 附近放大得@fig:g-wvd-spec，可观察到 $8.5 "Hz"$、$9.9 "Hz"$ 两频率分量的自项（两灰框内的恒正部分）与交叉项（灰框之间正负交替部分）。将WVD与时域波形对齐得@fig:g-wvd-compare。可见在WVD中交叉项正的时刻，时域波形振幅较大；在交叉项负的时刻，时域波形振幅较小，甚至接近零。这与理论分析一致。
 
 #subpar-grid(
   columns: 2,
-  figure(image("fig/g-wvd-spectrogram.png"), caption: [加速度信号的WVD]),
-  figure(image("fig/g-wvd-compare.png"), caption: [加速度信号的WVD显现到时域]),
-  caption: [加速度信号的WVD],
+  figure(image("fig/g-wvd-spectrogram.png"), caption: [WVD局部]), <fig:g-wvd-spec>, 
+  figure(image("fig/g-wvd-compare.png"), caption: [WVD局部（上）与时域波形（下）]), <fig:g-wvd-compare>,
+  caption: [加速度的WVD],
   label: <fig:g-wvd>,
 )
 
-// == 旋转时频平面的物理意义
+此外，由@fig:g-periodogram，$8.5 "Hz"$、$9.9 "Hz"$ 两频率分量的强度相差数倍。在@fig:g-wvd-spec 中，$9.9 "Hz"$ 强分量的自项清晰可见，而 $8.5 "Hz"$ 若分量的自项几乎无法分辨，而它与 $9.9 "Hz"$ 强分量形成的交叉项依然明晰。这也印证了@sec:dectect-the-weak\中检测弱分量的应用价值。
+
+== 旋转时频平面
+
+如果信号的分量没有重合时段，不满足拍频出现的条件，也可用旋转时频平面制造重合时段，让交叉项现象到时域。这一旋转可用分数域Fourier变换（fractional Fourier transform, FrFT）实现，它与WVD的关系如@fig:frft，时域的FrFT对应时频平面的旋转。
+
+#figure(
+  block(
+    diagram(spacing: (6em, 4em), $
+      x edge(label: "FrFT", marks: ->, dash: "dashed")
+      edge("d", label: "WVD", ->)
+      & x'
+      edge("d", label: "WVD", ->)
+      \
+      WVD_x
+      edge(label: "旋转", marks: ->, dash: "dashed")
+      & WVD_(x')
+    $),
+    inset: (bottom: 1em),
+  ),
+  caption: [FrFT与WVD的关系]
+) <fig:frft>
+
+@fig:cat-state 展示了这一过程，其每一小图的左上方为WVD，下方为时域瞬时功率，右方为频域功率谱密度。第一小图时，信号两分量频率相同，时间无重合，故交叉项在时域无反映，但显现到了频域。随着增加FrFT阶数，即旋转时频平面的角度，两分量渐渐重合时间，在时域显现为拍频。
+
+#figure(
+  grid(
+    columns: 3,
+    gutter: 1em,
+    ..("01", "10", "12", "13", "14", "16").map(
+      n => image("fig/Wigner_function_of_a_Schrödinger_cat_state/" + n + ".jpg", width: auto)
+    ),
+  ),
+  caption: [旋转时频平面（#link("https://commons.wikimedia.org/w/index.php?title=File:Wigner_function_of_a_Schr%C3%B6dinger_cat_state.gif&oldid=850044481")[Wikimedia Commons]，#link("https://physics.stackexchange.com/questions/191260/how-to-visualize-a-schr%c3%b6dinger-cat-state/191272#191272")[Emilio Pisanty]）]
+) <fig:cat-state>
+
+// TODO
+旋转时频平面并非只是唯象操作，也有物理意义。
+
+- 相空间：旋转轨迹切向的导数为零。
+- 时域：该场景的Schrödinger方程对应FrFT。
+
+// 未能成功的思路：旋转WVD再累加，反推出FrFT的自相关
 
 #pagebreak(weak: true)
 = 信号分析与量子物理的翻译词典 <sec:quantum>
@@ -612,7 +667,7 @@ WVD在时间边缘积分 $integral WVD_x dif f === abs(x)^2$ 反映信号在时�
 
 / 薛龙斌: 主要负责演变谱没有交叉项时的数学证明、Monte Carlo仿真实验、互WVD平移性质的证明，参与交叉项显现到时域实验的数据采集。
 
-/ 徐元昌: 主要负责Monte Carlo仿真实验中误差分析、交叉项几何特征分析以及图像绘制，交叉项显现到时域实验设计与信号处理、信号与量子物理的翻译词典。
+/ 徐元昌: 主要负责Monte Carlo仿真实验中误差分析、交叉项几何特征分析以及图像绘制，修复互WVD平移性质中的相位错误，交叉项显现到时域实验设计与信号处理、信号与量子物理的翻译词典。
 
 == 对教材中WVD相关内容的异议
 
@@ -624,7 +679,7 @@ $R_(x_1 x_2)^* (t,tau)$ 中的 $tau$ 应该是 $-tau$，$Re$ 应该是 $caron(Re
 
 $(f-f_mu) t + f_d (t-t_mu) + f_d t_mu$ 与同页下方的定义 $t_d = t_1 - t_2, f_d = t_1 - t_2$ 矛盾。如果保持 $t_d, f_d$ 定义不变，则该公式是本文@thm:shift 的特例，应该是 $(f-f_mu) t - f_d t$，这样才能给出正确的振荡方向。
 
-同页和第9页的图3-2还讨论了AF的位置，也存在有问题。
+同页和第9页的图3-2还讨论了AF的位置，也存在问题。
 
 === §3第20页图3-6d
 
@@ -813,18 +868,3 @@ $
   &= expect overline(Re e^(j (phi + pi\/2)))^2
   &= 1/(2N).
 $
-
-== 旋转时频平面——谐振子
-
-#link("https://en.wikipedia.org/wiki/Phase-space_formulation")[Phase-space formulation - Wikipedia]
-
-- 动图
-
-  源代码和评论：#link("https://physics.stackexchange.com/questions/191260/how-to-visualize-a-schr%c3%b6dinger-cat-state/191272#191272")[quantum mechanics - How to visualize a Schrödinger cat state? - Physics Stack Exchange]
-
-- 两种推导
-
-  - 相空间：旋转轨迹切向的导数为零。
-  - 时域：该场景的Schrödinger方程对应FrFT。
-
-// 未能成功的思路：旋转WVD再累加，反推出FrFT的自相关
