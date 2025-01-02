@@ -286,10 +286,63 @@ $ <eq:cross-corr>
 
 现在利用互WVD的平移性质，从频域定量理解交叉项的物理意义。
 
+#figure(
+  {
+    image("fig/几何特征-基本-1倍距离-π_4角度.png", width: 22em)
+    import "@preview/cetz:0.3.1"
+    set math.equation(numbering: none)
+    place(
+      top + left,
+      dx: 0.5em,
+      dy: 0.5em,
+      cetz.canvas(
+        length: 4.5em,
+        {
+          import cetz.draw: *
+          set-style(
+            // 用`circle`表示点
+            circle: (
+              fill: orange,
+              radius: 2pt,
+            ),
+            line: (
+              fill: blue.darken(20%),
+              stroke: (paint: blue.darken(20%)),
+            ),
+            content: (padding: 0.25em),
+          )
+          let aa = calc.sqrt(calc.pi) / 2
+          
+          // 规定坐标范围
+          grid((-2, -2), (2, 2), step: 1, stroke: none)
+
+          line(name: "hypot", (-aa, -aa), (aa, aa), stroke: (dash: "dashed"))
+          circle("hypot.50%")
+          content((rel: (-0.6, 0.3)), $ (t_mu, f_mu) $, anchor: "south-east")
+          line((), (to: "hypot.50%", rel: (-0.1, 0.08)), stroke: black)
+          
+          line(name: "t_d", "hypot.start", (aa,-aa), mark: (end: "stealth"))
+          content("t_d.50%", $ t_d $, anchor: "north")
+          
+          line(name: "f_d", "t_d.end", "hypot.end", mark: (end: "stealth"))
+          content("f_d.50%", $ f_d $, anchor: "west")
+
+          circle(name: "x", "f_d.end")
+          content("x", $ (t_x, f_x) $, anchor: "south-west")
+
+          circle(name: "y", "t_d.start")
+          content("y", $ (t_y, f_y) $, anchor: "north-east")
+        },
+      ),
+    )
+  },
+  caption: [所涉及变量在时频平面中的意义],
+) <fig:variables>
+
 #[
   #let wvd = $WVD_(tilde(x), tilde(y))$
   
-  考虑双分量信号 $z = x + y$。记两分量的时频中心分别为 $(t_x, f_x) in RR^2$ 与 $(t_y, f_y) in RR^2$，记两分量在各自时频中心的辐角分别为 $phi_x := arg x(t_x) in CC, thick phi_y := arg y(t_y) in CC$。
+  考虑双分量信号 $z = x + y$。记两分量的时频中心分别为 $(t_x, f_x) in RR^2$ 与 $(t_y, f_y) in RR^2$，记两分量在各自时频中心的辐角分别为 $phi_x := arg x(t_x) in CC, thick phi_y := arg y(t_y) in CC$，并沿用@thm:shift 中对 $t_mu, f_mu, t_d, f_d$ 的定义，总结如@fig:variables。
 
   首先，简化 $x,y$ 为 $tilde(x), tilde(y)$。构造
   $
@@ -395,7 +448,17 @@ $a=b$ 时，互WVD幅度是自WVD幅度的调和平方平均值。
 
 = 交叉项的几何特征 <sec:geometry>
 
-两分量的确定信号可以看作时频中心重叠的两个分量分别经过不同的时移和频移得到的。依旧按照@sec:shift 的思路，将 $x(t)$ 看作两个分量时频中心重叠的确定信号，根据互WVD的平移性质，此时信号的交叉项是缓变的。$x(t)$ 的两个分量分别经过时延平移和频率调制后得到 $x'(t)$，则信号 $x'(t)$ 的交叉项 $I_(x')(t,f)$ 为：
+本节分析WVD中交叉项的几何特征。
+// WVD中交叉项的几何特征。交叉项振荡的位置、方向、疏密与信号各分量密切相关
+
+继续@sec:meaning\的思路，考虑双分量信号 $z = x + y$，沿用@fig:variables 中的记号 $(t_x,f_x), (t_y, f_y), (t_mu, f_mu)$ 以及 $t_d,f_d$，记交叉项为 $I$（代表干涉interference）。由@eq:cross，
+$
+  I(t,f)
+  &~= 2 abs(WVD_(tilde(x), tilde(y)) (t-t_mu, f-f_mu)) \
+  &quad ** cos(2pi (f_d t - f t_d - f_d t_mu) + phi_x - phi_y).
+$ 
+
+看作两个分量时频中心重叠的确定信号，根据互WVD的平移性质，此时信号的交叉项是缓变的。$x(t)$ 的两个分量分别经过时延平移和频率调制后得到 $x'(t)$，则信号 $x'(t)$ 的交叉项 $I_(x')(t,f)$ 为：
 
 $
   I_(x')(t,f) & = 2Re WVD_(x_1,x_2)(t,f) \
@@ -410,8 +473,8 @@ $
 
 #subpar-grid(
   columns: (auto, auto),
-  figure(image("fig/两个信号分量相同时的交叉项.png", height: 15em), caption: [分量形式相同]),
-  figure(image("fig/几何特征-分量形式不同.png", height: 15em), caption: [分量形式相同]),
+  figure(image("fig/几何特征-基本-1倍距离-π_4角度.png", height: 15em), caption: [分量形式相同]),
+  figure(image("fig/几何特征-分量形式不同.png", height: 15em), caption: [分量形式不同]),
   caption: [交叉项的振荡位置],
   label: <fig:cross-position>,
 )
@@ -440,10 +503,12 @@ $
 
 = 交叉项显现到时域 <sec:reify>
 
+WVD在时间边缘积分 $integral WVD_x dif f === abs(x)^2$ 反映信号在时域的瞬时功率。WVD的交叉项存在振荡，一般认为积分时正负抵消，最终结果为零，并不显现到时域。这一命题成立是否总成立？交叉项在何种条件下能显现到时域？
 
-交叉项在什么条件下会显现到时域（或频域）？
-
+根据@sec:geometry\的分析，交叉项振荡的
 同一时刻有多个频率分量，交叉项就会显现为拍频。拍频的频率正是公式 (3.3)@hlawatsch1997[page. 7] 中 $(t,f)$ 平面内交叉项的角波矢的模。
+
+此外，WVD在频率边缘积分也反映信号在频域的功率谱。不过其原理与时域相同，将不重复讨论。
 
 == 实验设计
 
