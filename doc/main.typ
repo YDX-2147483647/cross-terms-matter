@@ -16,7 +16,7 @@
     (name: "薛龙斌", email: "3120245441@bit.edu.cn", id: "3120245441"),
     (name: "徐元昌", email: "y_d_x@bit.edu.cn", id: "3120245440"),
   ),
-  date: datetime.today().display("[year]年[month]月[day]日"),
+  date: "2024年12月31日",
 )
 
 #import "alias.typ": *
