@@ -92,63 +92,53 @@ $ <eq:expand-sum>
 
 = WVD可以没有交叉项<sec:disappear>
 
-不同于STFT对信号的线性表示，WVD是一种非线性变换，是双线性形式的时频分布@张贤达2015a。假如某一个信号含有多个不同的分量，利用WVD对信号做时频分析的时候，这就不可避免地要讨论交叉项这个问题。对于含有多个不同分量的的确知信号，利用WVD分析该信号的时频特性。这时，时频平面上一定会出现交叉项，这将会详细讨论。而对于含有多个不同分量的随机信号，我们更关心集体的平均效果，信号的演变谱就等于该信号WVD的数学期望。由于随机信号的演变谱在WVD的基础上又求了数学期望，因此随机信号的演变谱中交叉项有可能为零，交叉线不会出现再时频平面中，也就是没有交叉项。
+不同于STFT对信号的线性表示，WVD是一种非线性变换，是双线性形式的时频分布@张贤达2015a。假如某一个信号含有多个不同的分量，利用WVD对信号做时频分析的时候，这就不可避免地要讨论交叉项这个问题。对于含有多个不同分量的的确知信号，利用WVD分析该信号的时频特性。这时，时频平面上一定会出现交叉项，这将会详细讨论。而对于含有多个不同分量的随机信号，我们更关心集体的平均效果，随机信号的*演变谱*就等于该信号WVD的数学期望。由于随机信号的演变谱在WVD的基础上又求了数学期望，因此随机信号的演变谱中交叉项有可能为零，交叉线不会出现再时频平面中，也就是没有交叉项。
 
 我们构造了一个随机信号，该随机信号含有两个分量，两个分量之间相差一个均匀分布的随机相位。该信号的演变谱将没有交叉项，这点可以从数学上去证明。此外，我们进行了Monte Carlo仿真实验，进一步验证我们的猜想。
 
 构造含有两个分量的随机信号形式如下：
 $
-  X(t) = x_1 (t) + C x_2(t),
+  Z(t) = x (t) + C y(t),
   quad t in RR,
 $
-其中，$x_1 (t)$ 和 $x_2 (t)$ 是确定信号，$C = e^(j phi)$，$phi ~ U(0, 2 pi)$。
+其中，$x (t)$ 和 $y (t)$ 是确定信号，$C = e^(j phi)$，$phi ~ U(0, 2 pi)$。
 
 == 数学证明
 
-所构造的随机信号 $X(t)$ 的演变谱为：
-// TODO: 用@sec:intro\简化
+由@eq:expand-sum，$Z(t)$ 的演变谱等于
 $
-  & expect WVD_X (t,f) \
-  & = expect integral_RR X(t+tau/2) X^*(t-tau/2)e^(-j 2pi f tau) dif tau \
-  & = expect integral_RR
-    [x_1(t+tau/2) + C x_2 (t+tau/2)]
-    [x_1(t-tau/2) + C x_2(t-tau/2)]^*
-    e^(-j 2pi f tau) dif tau \
-  & = expect integral_RR
-    x_1(t+tau/2) x_1^*(t-tau/2) e^(-j 2pi f tau) dif tau \
-  &quad + 2 Re expect integral_RR 
-    C x_1 (t+tau/2) x_2^*(t-tau/2) e^(-j 2pi f tau) dif tau \
-  &quad + expect integral_RR
-    abs(C)^2 x_2(t+tau/2) x_2^*(t-tau/2) e^(-j 2pi f tau) dif tau.
+  & expect WVD_Z \
+  & = expect (WVD_x + WVD_(C y) + 2 Re WVD_(x, C y)) \
+  & = expect WVD_x + expect abs(C)^2 WVD_y + 2 expect Re macron(C) WVD_(x, y) \
+  & = expect WVD_x + (expect abs(C)^2) WVD_y + 2 Re overline(expect C) WVD_(x, y), \
 $ <eq:expect-wvd>
-@eq:expect-wvd 中，第一项和第三项为自项，第二项为交叉项。
+其中前两项为自项，第三项为交叉项。
 
-第二项交叉项可以利用两个信号之间的相位差 $phi$ 服从 $[0, 2pi]$ 之间的均匀分布进一步写作：
+根据 $C$ 及 $phi$ 的分布，
+$expect C = integral_0^(2pi) e^(j phi) (dif phi)/(2pi) = 0$。因此，交叉项
 $
-  & 2 Re expect integral_RR C x_1(t+tau/2)x_2^*(t-tau/2) e^(-j 2pi f tau) dif tau \
-  & = 2 Re integral_RR dif tau integral_0^(2pi) (dif phi)/(2pi) C x_1(t+tau/2) x_2^*(t-tau/2) e^(-j 2pi f tau) \
-  & = 2 Re integral_0^(2pi) C (d phi)/(2pi) **
-    integral_RR x_1(t+tau/2)x_2^*(t-tau/2) e^(-j 2pi f tau) dif tau.
-$ <eq:expect-cross>
-@eq:expect-cross 中，$integral_0^(2pi) C (dif phi)/(2pi) = 0$，所以随机信号 $X(t)$ 演变谱的交叉项为0，也就是刚好没有交叉项。
+  2 Re overline(expect C) WVD_(x, y)
+  = 2 Re 0 = 0.
+$
+也就是刚好没有交叉项。
 
 == Monte Carlo实验 <sec:disappear-simulate>
 
-我们对构造的随机信号 $X(t)$ 的演变谱进行了Monte Carlo仿真实验，实验中随机选择相位 $phi$，10次、100次、500次、1000次、2000次Monte Carlo实验的结果如@fig:WignerNoCrossterms 所示。当实验次数分别为10次、100次和500次时，交叉项隐约可以看到，但是交叉项随着仿真次数的增加啊会变得更小。进一步增加实验次数至1000次、2000次，交叉项基本消失。
-
-我们选择交叉项绝对值的最大值作为交叉项的幅度，基于此分析交叉项的Monte Carlo实验的仿真结果与理论值的偏差，结果如@fig:cross_intensity 所示。随着样本数量的增加，交叉项的幅度会变得更小，这进一步印证了所构造的信号的演变谱没有交叉项。
-
 #subpar-grid(
   columns: 3,
-  figure(image("fig/10次MC仿真.png"), caption: [10次实验]),
-  figure(image("fig/100次MC仿真.png"), caption: [100次实验]),
-  figure(image("fig/500次MC仿真.png"), caption: [500次实验]),
-  figure(image("fig/1000次MC仿真.png"), caption: [1000次实验]),
-  figure(image("fig/2000次MC仿真.png"), caption: [2000次实验]),
+  figure(image("fig/10次MC仿真.png"), caption: [用 $10$ 个样本平均]),
+  figure(image("fig/100次MC仿真.png"), caption: [用 $100$ 个样本平均]),
+  figure(image("fig/500次MC仿真.png"), caption: [用 $500$ 个样本平均]),
+  figure(image("fig/1000次MC仿真.png"), caption: [用 $1000$ 个样本平均]),
+  figure(image("fig/2000次MC仿真.png"), caption: [用 $2000$ 个样本平均]),
   figure(image("fig/cross_intensity.png"), caption: [仿真与理论误差]), <fig:cross_intensity>,
   caption: [Monte Carlo实验结果及误差分析],
   label: <fig:WignerNoCrossterms>,
 )
+
+我们对构造的随机信号 $X(t)$ 的演变谱进行了Monte Carlo仿真实验，实验中随机选择相位 $phi$，$10$ 次、$100$ 次、$500$ 次、$1000$ 次、$2000$ 次Monte Carlo实验的结果如@fig:WignerNoCrossterms 所示。当实验次数分别小于等于 $500$次时，交叉项隐约可以看到，但是交叉项随着仿真次数的增加啊会变得更小。进一步增加实验次数至超过 $1000$ 次，交叉项基本消失。
+
+我们选择交叉项绝对值的最大值作为交叉项的幅度，基于此分析交叉项的Monte Carlo实验的仿真结果与理论值的偏差，结果如@fig:cross_intensity 所示。随着样本数量的增加，交叉项的幅度会变得更小，这进一步印证了所构造的信号的演变谱没有交叉项。
 
 = 交叉项的物理意义 <sec:meaning>
 
