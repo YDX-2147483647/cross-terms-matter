@@ -1,4 +1,4 @@
-#import "@preview/physica:0.9.3": bra, ket, expval, eval, Re, Im
+#import "@preview/physica:0.9.3": bra, ket, expval, eval, Re, Im, dv, pdv
 
 #let expect = math.op(sym.EE)
 #let WVD = math.op("WVD")

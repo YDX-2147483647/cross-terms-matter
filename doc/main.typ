@@ -595,11 +595,90 @@ WVD在时间边缘积分 $integral WVD_x dif f === abs(x)^2$ 反映信号在时�
   caption: [旋转时频平面（#link("https://commons.wikimedia.org/w/index.php?title=File:Wigner_function_of_a_Schr%C3%B6dinger_cat_state.gif&oldid=850044481")[Wikimedia Commons]，#link("https://physics.stackexchange.com/questions/191260/how-to-visualize-a-schr%c3%b6dinger-cat-state/191272#191272")[Emilio Pisanty]）]
 ) <fig:cat-state>
 
-// TODO
-旋转时频平面并非只是唯象操作，也有物理意义。
+旋转时频平面并非只是唯象操作，也有物理意义。我们从时间 $t$、频率 $f$ 切换为位置 $q$、动量 $p$（$j hbar pdv(,q) <-> p$），则时频平面切换为相空间。
+考虑谐振子系统，其相空间随时间的演化就是旋转相空间。
 
-- 相空间：旋转轨迹切向的导数为零。
-- 时域：该场景的Schrödinger方程对应FrFT。
+具体分析如下。谐振子系统的势能为 $1/2 k q^2$，动能为 $p^2 / (2 m)$，其中 $k$ 是弹性系数，$m$ 是质量。故谐振子系统的Hamiltonian
+$ cal(H) = p^2 / (2 m )+ (k q^2) / 2. $
+注意 $q,p$ 本来具有不同量纲，无法将某个 $q$ 坐标旋转到 $p$ 轴上；但 $cal(H)$ 用 $m,k$ 这些系统固有的参数在 $q,p$ 之间建立了联系，“将 $1 / sqrt(m) p$ 坐标旋转到 $sqrt(k) q$ 轴上”不再有量纲上的问题。
+下面有位置域（对应原来的时域）、相空间（对应原来的时频平面）两种论证。
+
+#[
+  #show list: set par(first-line-indent: 0em)
+  
+  - *位置域（时域）*
+  
+    记位置表象的概率幅为 $psi$（对应原来信号的时域波形）。由Schrödinger 方程，
+    $ -j hbar pdv(psi,t) = cal(H) psi. $
+    注意 $q |-> eval(psi)_(t)$ 是一族 $RR -> CC$ 函数。事实上，上述方程等价于 $q |-> eval(psi)_(t=0)$ 与 $q |-> eval(psi)_(t=t)$（适当标准化后）是角度正比于 $t$ 的FrFT变换对@陶然2022。
+
+    在位置域分析需要的概念浅，但计算非常复杂，此处省略。
+
+    // 我们通过求特征函数来解方程，转而考虑定态Schrödinger方程
+    // $ E psi = cal(H) psi. $
+    
+    // 记 $theta := 2pi ((u^2 + v^2)/2 cot alpha - u v csc alpha)$，$A := sqrt(1 - j cot alpha)$ 。一方面，由 $j dv(,alpha) mat(cot alpha; csc alpha) = mat(csc alpha; cot alpha) csc alpha$ 和 $1 + cot^2 alpha = csc^2 alpha$，
+    // // 以及 $dv(,alpha,2) mat(cot alpha; csc alpha) = mat(2 csc alpha cot alpha; csc^2 alpha + cot^2 alpha) csc alpha$
+    // $
+    //   j pdv(,alpha) e^(j theta)
+    //   &= e^(j theta) ** 2pi ((u^2 + v^2)/2 csc alpha - u v cot alpha) csc alpha, \
+    //   j pdv(,alpha) A
+    //   &= -A ** (csc^2 alpha) / (2 (1 - j cot alpha))
+    //   = - A ** (1 + j cot alpha) / 2,
+    // $
+    // 于是
+    // $
+    //   & j pdv(,alpha) A  e^(j theta) \
+    //   &= A e^(j theta) ** (
+    //     - (1 + j cot alpha) / 2
+    //     + 2pi ((u^2 + v^2)/2 csc alpha - u v cot alpha) csc alpha
+    //   ).
+    // $
+    // 另一方面，由 $pdv(A, u) = 0$ 和 $pdv(theta, u) = 2pi (u cot alpha - v csc alpha)$，
+    // $
+    //   pdv(,u,2) A e^(j theta)
+    //   = A e^(j theta) ** j 2pi (u cot alpha - v csc alpha) 
+    // $
+  
+  - *相空间（时频平面）*
+
+    在相空间可用高层次概念分析，计算更简单。
+  
+    // https://en.wikipedia.org/wiki/Phase-space_formulation#Simple_harmonic_oscillator
+    记相空间上的伪分布为 $W$（对应WVD）。由Moyal方程，
+    $ pdv(W, t)  = {{cal(H), W}}, $
+    其中 ${{dot, dot}}$ 是Moyal括号。注意 $(q,p) |-> eval(W)_t$ 是一族相空间上的 $RR^2 -> RR$ 函数。事实上，上述方程等价于（适当标准化后）$eval(W)_t$ 等于 $eval(W)_(t=0)$ 绕原点旋转正比于 $t$ 的角度。
+  
+    仍通过求特征函数来解方程，转而考虑定态方程
+    $ E W = cal(H) star W, $
+    其中 $star$ 是Moyal star product。由 $star$ 的定义，
+    $
+      cal(H) star W
+      &:= cal(H) exp((j hbar)/2 (arrow.l(diff_q) arrow(diff_p) - arrow.l(diff_p) arrow(diff_q))) W \
+      &= ((p - (j hbar)/2 diff_q)^2 / (2m) + (k (q + (j hbar)/2 diff_p)^2)/2) W \
+      &= Re(dots.c) + (j hbar)/2 (k q diff_p - p/m diff_q) W.
+    $
+    而 $E, W in RR$ 要求 $cal(H) star W = E W in RR$，所以上式的虚部必须为零，即
+    $ (k q diff_p - p/m diff_q) W === 0. $ <eq:moyal-zero>
+    在 $q$--$p$ 平面内，上式左边是 $(k q, -p/m)$ 方向的方向导数。注意 $(k q, -p m)$ 就是圆周“$(k q^2) / 2 + p^2 / (2 m) = "常数"$”的切向，所以@eq:moyal-zero 意味着所有特征函数在这族同心圆周的切向的导数为零，值不变。既然所有定态沿圆周旋转不变，那么一般的演化规律也就是绕原点旋转了（可以证明旋转角速度不随圆周半径变化），即
+    $
+      W(mat(q; p), t)
+      &=== W(
+        mat(1/sqrt(k); , sqrt(m))
+        mat(
+          cos(omega t), - sin(omega t);
+          sin(omega t), cos(omega t);
+        )
+        mat(sqrt(k); , 1/sqrt(m))
+        mat(q; p), 0), \
+      &=== W(
+        mat(
+          q cos(omega t) - 1/sqrt(m k) p sin(omega t);
+          p cos(omega t) + sqrt(m k) thin q sin(omega t);
+        ), 0),
+    $
+    其中 $omega = sqrt(k \/ m)$。
+]
 
 // 未能成功的思路：旋转WVD再累加，反推出FrFT的自相关
 
